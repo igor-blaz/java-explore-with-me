@@ -1,4 +1,4 @@
-package ru.practicum.shortDto;
+package ru.practicum.dto.user;
 
 import lombok.Data;
 
