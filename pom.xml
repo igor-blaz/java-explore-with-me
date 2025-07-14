@@ -6,8 +6,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.3.3</version>
+        <relativePath/>
     </parent>
 
     <name>Explore With Me</name>
@@ -22,7 +22,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>

@@ -5,6 +5,7 @@ import lombok.Data;
 import ru.practicum.dto.Location;
 
 import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data

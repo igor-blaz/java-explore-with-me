@@ -1,7 +1,7 @@
 package ru.practicum.dto.compilation;
 
 import lombok.Data;
-
+import jakarta.validation.constraints.NotNull;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
