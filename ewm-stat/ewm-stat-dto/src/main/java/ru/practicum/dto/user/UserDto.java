@@ -1,9 +1,9 @@
 package ru.practicum.dto.user;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 
 @Data
 public class UserDto {

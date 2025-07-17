@@ -2,10 +2,13 @@ package ru.practicum.dto.compilation;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import ru.practicum.dto.event.EventShortDto;
+
+import java.util.List;
 
 @Data
 public class CompilationDto {
-    //  private
+    private List<EventShortDto> events;
     @NotNull
     private Long id;
     @NotNull
