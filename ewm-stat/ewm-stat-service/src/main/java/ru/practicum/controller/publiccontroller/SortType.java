@@ -1,4 +1,4 @@
-package ru.practicum.publicApi;
+package ru.practicum.controller.publiccontroller;
 
 public enum SortType {
     EVENT_DATE,

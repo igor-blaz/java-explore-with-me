@@ -1,10 +1,11 @@
-package ru.practicum.adminApi.adminEvents;
+package ru.practicum.controller.admincontroller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
+import ru.practicum.service.EventService;
 
 import java.util.List;
 
@@ -13,11 +14,15 @@ import java.util.List;
 @RequestMapping(path = "/admin/events")
 @RequiredArgsConstructor
 public class AdminEventsController {
+
+    private final EventService eventService;
+
+
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
             @Valid @RequestBody EventFullDto eventFullDto,
             @PathVariable Long eventId) {
-        return null;
+        return eventService.adminUpdateEvent(eventFullDto, eventId);
     }
 
     @GetMapping
@@ -30,7 +35,8 @@ public class AdminEventsController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return null;
+        return eventService.adminGetEvents(users, states, categories,
+                rangeStart, rangeEnd, from, size);
     }
 
 }

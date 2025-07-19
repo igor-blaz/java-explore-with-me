@@ -1,4 +1,4 @@
-package ru.practicum.adminApi.adminCompilations;
+package ru.practicum.controller.admincontroller;
 
 
 import jakarta.validation.Valid;
