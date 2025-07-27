@@ -1,11 +1,11 @@
-package ru.practicum.dto;
+package ru.practicum.dto.location;
 
 import lombok.Data;
 
 import jakarta.validation.constraints.NotNull;
 
 @Data
-public class Location {
+public class LocationDto {
     @NotNull
     private Double lat;
     @NotNull

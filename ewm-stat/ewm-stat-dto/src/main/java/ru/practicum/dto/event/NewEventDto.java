@@ -3,7 +3,7 @@ package ru.practicum.dto.event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.practicum.dto.Location;
+import ru.practicum.dto.location.LocationDto;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ public class NewEventDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull
     private LocalDateTime eventDate;
-    private Location location;
+    private LocationDto locationDto;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
