@@ -1,6 +1,7 @@
 package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.practicum.dto.category.CategoryDto;
@@ -23,7 +24,7 @@ public class EventShortDto {
     private UserShortDto initiator;
     @NotNull
     private Boolean paid;
-    @NotNull
+    @NotBlank
     private String title;
     private Long views;
 

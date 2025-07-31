@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/admin/categories")
+@RequestMapping(path = "/admin/users")
 @RequiredArgsConstructor
 public class AdminUsersController {
 

@@ -9,8 +9,7 @@ import ru.practicum.repository.LocationRepository;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@EnableJpaRepositories(basePackages = "ru/practicum/dto/Location.java")
 public class LocationStorage {
-    private final LocationRepository locationRepository;
+
 
 }

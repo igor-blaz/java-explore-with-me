@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.participation.ParticipationRequestDto;
+import ru.practicum.service.ParticipationServiceImpl;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @RequestMapping(path = "/users/{userId}/requests")
 @RequiredArgsConstructor
 public class PrivateRequestsController {
+    private final ParticipationServiceImpl participationService;
 
     @GetMapping
     public List<ParticipationRequestDto> getUserRequestDto(

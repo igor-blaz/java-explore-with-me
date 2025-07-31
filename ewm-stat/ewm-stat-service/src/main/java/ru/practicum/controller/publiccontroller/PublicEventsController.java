@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.service.EventServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,9 @@ import java.util.List;
 @RequestMapping(path = "/events")
 @RequiredArgsConstructor
 public class PublicEventsController {
+
+    private final EventServiceImpl eventServiceImpl;
+
     @GetMapping
     public List<EventShortDto> searchEvents(
             @RequestParam(required = false) String text,

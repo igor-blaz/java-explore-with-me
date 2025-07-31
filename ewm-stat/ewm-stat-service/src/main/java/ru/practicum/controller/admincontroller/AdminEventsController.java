@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.service.EventService;
+import ru.practicum.service.EventServiceImpl;
 
 import java.util.List;
 
@@ -15,14 +15,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminEventsController {
 
-    private final EventService eventService;
+    private final EventServiceImpl eventServiceImpl;
 
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
             @Valid @RequestBody EventFullDto eventFullDto,
             @PathVariable Long eventId) {
-        return eventService.adminUpdateEvent(eventFullDto, eventId);
+        return eventServiceImpl.adminUpdateEvent(eventFullDto, eventId);
     }
 
     @GetMapping
@@ -35,7 +35,7 @@ public class AdminEventsController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return eventService.adminGetEvents(users, states, categories,
+        return eventServiceImpl.adminGetEvents(users, states, categories,
                 rangeStart, rangeEnd, from, size);
     }
 

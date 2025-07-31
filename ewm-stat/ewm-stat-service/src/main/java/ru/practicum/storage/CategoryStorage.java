@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@EnableJpaRepositories(basePackages = "ru/practicum/shareit/request")
 public class CategoryStorage {
 
 }

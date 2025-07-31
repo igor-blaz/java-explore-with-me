@@ -9,6 +9,7 @@ import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.UpdateEventUserRequest;
 import ru.practicum.dto.participation.ParticipationRequestDto;
+import ru.practicum.service.EventServiceImpl;
 
 import java.util.List;
 
@@ -17,6 +18,8 @@ import java.util.List;
 @RequestMapping(path = "/users/{userId}/events")
 @RequiredArgsConstructor
 public class PrivateEventsController {
+
+    private final EventServiceImpl eventServiceImpl;
 
     @GetMapping
     public List<EventShortDto> getUserEvents(
@@ -58,7 +61,7 @@ public class PrivateEventsController {
         return null;
     }
 
-    @PatchMapping("/{eventId}")
+    @PatchMapping("/{eventId}/requests")
     public NewCompilationDto updateEventCompilationRequest(
             @PathVariable Long userId,
             @PathVariable Long eventId

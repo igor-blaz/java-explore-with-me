@@ -1,4 +1,22 @@
 package ru.practicum.repository;
 
-public interface CompilationRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import ru.practicum.model.Compilation;
+
+import java.util.List;
+
+public interface CompilationRepository extends JpaRepository<Compilation, Long> {
+
+    @Query(value = """
+    SELECT * FROM compilations
+    WHERE (:pinned IS NULL OR pinned = :pinned)
+    LIMIT :size OFFSET :from
+    """, nativeQuery = true)
+    default List<Compilation> findAllCompilationsNative(@Param("pinned") Boolean pinned,
+                                                        @Param("from") int from,
+                                                        @Param("size") int size) {
+        return null;
+    }
 }

@@ -1,4 +1,8 @@
 package ru.practicum.repository;
 
-public interface ParticipationRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.practicum.model.Location;
+import ru.practicum.model.Participation;
+
+public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 }

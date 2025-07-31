@@ -1,4 +1,8 @@
 package ru.practicum.repository;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.practicum.model.Location;
+import ru.practicum.model.User;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 }

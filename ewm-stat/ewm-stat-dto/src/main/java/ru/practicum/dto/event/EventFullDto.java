@@ -1,6 +1,7 @@
 package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.practicum.dto.location.LocationDto;
@@ -33,7 +34,7 @@ public class EventFullDto {
     private Boolean requestModeration;
     private StateAction state;
 
-    @NotNull
+    @NotBlank
     private String title;
     private Long views;
 
