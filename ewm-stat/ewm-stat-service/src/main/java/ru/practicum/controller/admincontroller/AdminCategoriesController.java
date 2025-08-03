@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.category.CategoryDto;
+import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.service.CategoryServiceImpl;
 
 @Slf4j
@@ -16,13 +17,13 @@ public class AdminCategoriesController {
     private final CategoryServiceImpl categoryService;
 
     @PostMapping
-    public CategoryDto addCategory(@Valid @RequestBody CategoryDto categoryDto) {
-        return new CategoryDto();
+    public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
+        return categoryService.addCategory(newCategoryDto);
     }
 
-    @DeleteMapping
-    public void deleteCategory(@Valid @RequestBody CategoryDto categoryDto) {
-
+    @DeleteMapping("/{catId}")
+    public void deleteCategory(@PathVariable Long catId) {
+        categoryService.deleteCategory(catId);
     }
 
     @PatchMapping("/{catId}")

@@ -2,12 +2,14 @@ package ru.practicum.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.dto.location.LocationDto;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class UpdateEventAdminRequest {
     private String annotation;
     private Long category;

@@ -3,9 +3,11 @@ package ru.practicum.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.Compilation;
 import ru.practicum.repository.CompilationRepository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -15,13 +17,24 @@ public class CompilationStorage {
     private final CompilationRepository compilationRepository;
 
     public List<Compilation> findCompilations(Boolean pinned, Integer from, Integer size) {
-
-        List<Compilation> compilations = compilationRepository.findAllCompilationsNative(pinned, from, size);
-        return null;
+        List<Compilation> allByPinned = compilationRepository.findAllByPinned(pinned);
+        if (from >= allByPinned.size()) {
+            return Collections.emptyList();
+        }
+        if (from == 0 && size == 0) {
+            return allByPinned;
+        }
+        List<Compilation> sortedByFrom = allByPinned.subList(from, allByPinned.size());
+        if (size >= sortedByFrom.size()) {
+            return sortedByFrom;
+        }
+        return sortedByFrom.subList(0, size);
     }
 
-    public Compilation getCompilationById() {
-        return null;
+
+    public Compilation getCompilationById(Long id) {
+        return compilationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Подборка с id: " + id + " не найдена"));
     }
 
     public Compilation updateCompilation() {
