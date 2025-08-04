@@ -37,5 +37,16 @@ public class CategoryMapper {
                 .name(category.getName())
                 .build();
     }
+
+    public static Category toEntity(CategoryDto categoryDto) {
+        if (categoryDto == null) {
+            return null;
+        }
+
+        return Category.builder()
+                .id(categoryDto.getId())
+                .name(categoryDto.getName())
+                .build();
+    }
 }
 

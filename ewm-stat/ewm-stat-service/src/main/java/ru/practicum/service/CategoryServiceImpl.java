@@ -2,7 +2,6 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.NewCategoryDto;
@@ -32,4 +31,12 @@ public class CategoryServiceImpl {
         }
         categoryStorage.deleteCategory(category);
     }
+
+    public CategoryDto updateCategory(CategoryDto categoryDto, Long id) {
+        Category categoryForUpdate = CategoryMapper.toEntity(categoryDto);
+        Category oldCategory = categoryStorage.getCategory(id);
+        Category afterUpdate = categoryStorage.updateCategory(categoryForUpdate, oldCategory);
+        return CategoryMapper.toCategoryDto(afterUpdate);
+    }
+
 }

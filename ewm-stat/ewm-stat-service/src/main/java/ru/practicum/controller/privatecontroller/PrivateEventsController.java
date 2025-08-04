@@ -24,10 +24,11 @@ public class PrivateEventsController {
     @GetMapping
     public List<EventShortDto> getUserEvents(
             @PathVariable Long userId,
-            @RequestParam(required = false) int from,
-            @RequestParam(required = false) int size
+            @RequestParam(required = false) Integer from,
+            @RequestParam(required = false) Integer size
     ) {
-        return null;
+       eventServiceImpl.getUserEvents(userId, from, size);
+       return null;
     }
 
     @PostMapping

@@ -30,7 +30,7 @@ public class AdminCategoriesController {
     public CategoryDto updateCategory(
             @Valid @RequestBody CategoryDto categoryDto,
             @PathVariable Long catId) {
-        return null;
+        return  categoryService.updateCategory(categoryDto, catId);
     }
 
 

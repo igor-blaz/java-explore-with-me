@@ -22,7 +22,7 @@ public class ExceptionHandlerAdvice {
                 .build();
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(NumberFormatException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNotFoundException(NumberFormatException e) {
         return ErrorResponse.builder()

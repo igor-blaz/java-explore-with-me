@@ -17,18 +17,19 @@ public class CompilationStorage {
     private final CompilationRepository compilationRepository;
 
     public List<Compilation> findCompilations(Boolean pinned, Integer from, Integer size) {
-        List<Compilation> allByPinned = compilationRepository.findAllByPinned(pinned);
-        if (from >= allByPinned.size()) {
-            return Collections.emptyList();
-        }
-        if (from == 0 && size == 0) {
-            return allByPinned;
-        }
-        List<Compilation> sortedByFrom = allByPinned.subList(from, allByPinned.size());
-        if (size >= sortedByFrom.size()) {
-            return sortedByFrom;
-        }
-        return sortedByFrom.subList(0, size);
+//        List<Compilation> allByPinned = compilationRepository.findAllByPinned(pinned);
+//        if (from >= allByPinned.size()) {
+//            return Collections.emptyList();
+//        }
+//        if (from == 0 && size == 0) {
+//            return allByPinned;
+//        }
+//        List<Compilation> sortedByFrom = allByPinned.subList(from, allByPinned.size());
+//        if (size >= sortedByFrom.size()) {
+//            return sortedByFrom;
+//        }
+//        return sortedByFrom.subList(0, size);
+        return compilationRepository.findCompilationsNative(pinned, from, size);
     }
 
 
