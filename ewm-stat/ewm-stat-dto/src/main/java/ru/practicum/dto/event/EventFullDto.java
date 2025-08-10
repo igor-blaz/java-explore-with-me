@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.category.CategoryDto;
+import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public class EventFullDto {
     private LocalDateTime eventDate;
     private Long id;
     private UserShortDto initiator;
-    private LocationDto locationDto;
+    private LocationDto location;
     private Boolean paid;
     private Integer participantLimit;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
