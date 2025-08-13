@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.compilation.NewCompilationDto;
-import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.UpdateEventUserRequest;
+import ru.practicum.dto.event.*;
 import ru.practicum.dto.participation.ParticipationRequestDto;
 import ru.practicum.service.EventServiceImpl;
 
@@ -53,6 +50,7 @@ public class PrivateEventsController {
             @PathVariable Long eventId
     ) {
         return eventServiceImpl.updateEventUserRequest(updateEventUserRequest, eventId, userId);
+
     }
 
     @GetMapping("/{eventId}/requests")
@@ -60,15 +58,16 @@ public class PrivateEventsController {
             @PathVariable Long userId,
             @PathVariable Long eventId
     ) {
-        return null;
+        return eventServiceImpl.getUserRequests(userId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests")
-    public NewCompilationDto updateEventCompilationRequest(
+    public EventRequestStatusUpdateResult updateEventCompilationRequest(
+            @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest,
             @PathVariable Long userId,
             @PathVariable Long eventId
     ) {
-        return null;
+        return eventServiceImpl.updateRequestStatus(eventRequestStatusUpdateRequest, userId, eventId);
     }
 
 

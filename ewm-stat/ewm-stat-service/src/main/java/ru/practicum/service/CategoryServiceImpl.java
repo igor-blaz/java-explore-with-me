@@ -11,6 +11,8 @@ import ru.practicum.model.Category;
 import ru.practicum.storage.CategoryStorage;
 import ru.practicum.storage.EventStorage;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -18,13 +20,22 @@ public class CategoryServiceImpl {
     private final CategoryStorage categoryStorage;
     private final EventStorage eventStorage;
 
+    public CategoryDto getCategoryById(Long id) {
+        return CategoryMapper.toCategoryDto(categoryStorage.getCategoryById(id));
+    }
+
+    public List<CategoryDto> getAllCategories(int from, int size) {
+        List<Category> categories = categoryStorage.getAllCategories(from, size);
+        return CategoryMapper.toCategoryDtoList(categories);
+    }
+
     public CategoryDto addCategory(NewCategoryDto categoryDto) {
         Category category = categoryStorage.addNewCategory(categoryDto);
         return CategoryMapper.toCategoryDto(category);
     }
 
     public void deleteCategory(Long id) {
-        Category category = categoryStorage.getCategory(id);
+        Category category = categoryStorage.getCategoryById(id);
         boolean eventHasCategory = eventStorage.isHasCategory(category);
         if (eventHasCategory) {
             throw new ConflictException("у этой категории есть связанные события");
@@ -34,7 +45,7 @@ public class CategoryServiceImpl {
 
     public CategoryDto updateCategory(CategoryDto categoryDto, Long id) {
         Category categoryForUpdate = CategoryMapper.toEntity(categoryDto);
-        Category oldCategory = categoryStorage.getCategory(id);
+        Category oldCategory = categoryStorage.getCategoryById(id);
         Category afterUpdate = categoryStorage.updateCategory(categoryForUpdate, oldCategory);
         return CategoryMapper.toCategoryDto(afterUpdate);
     }

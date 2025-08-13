@@ -10,17 +10,24 @@ import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.model.Category;
 import ru.practicum.repository.CategoryRepository;
 
+import java.util.List;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CategoryStorage {
     private final CategoryRepository repository;
 
+    public List<Category> getAllCategories(int from, int size) {
+        return repository.findCategoriesNative(from, size);
+
+    }
+
     public Category addNewCategory(NewCategoryDto newCategoryDto) {
         return repository.save(CategoryMapper.toEntity(newCategoryDto));
     }
 
-    public Category getCategory(Long id) {
+    public Category getCategoryById(Long id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException("Категроия не найдена"));
     }
 

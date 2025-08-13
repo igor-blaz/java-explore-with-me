@@ -17,6 +17,9 @@ public class LocationStorage {
         return locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Локация с id: " + id + " не найдена"));
     }
+    public Location saveLocation(Location location){
+        return locationRepository.save(location);
+    }
 
 
 }

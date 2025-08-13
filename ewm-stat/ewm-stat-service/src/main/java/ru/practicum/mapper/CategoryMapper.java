@@ -5,8 +5,19 @@ import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.model.Category;
 
+import java.util.Collections;
+import java.util.List;
+
 @UtilityClass
 public class CategoryMapper {
+
+    public static List<CategoryDto> toCategoryDtoList(List<Category> categories) {
+
+        if (categories == null || categories.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return categories.stream().map(CategoryMapper::toCategoryDto).toList();
+    }
 
     public static Category toEntity(NewCategoryDto dto) {
         if (dto == null) {
@@ -27,6 +38,7 @@ public class CategoryMapper {
                 .name(category.getName())
                 .build();
     }
+
     public static CategoryDto toCategoryDto(Category category) {
         if (category == null) {
             return null;

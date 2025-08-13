@@ -21,12 +21,12 @@ public class PublicCategoriesController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return null;
+        return categoryService.getAllCategories(from, size);
     }
 
     @GetMapping("/{catId}")
-    public List<CategoryDto> getCategoryById(@PathVariable Long catId){
-        return null;
+    public CategoryDto getCategoryById(@PathVariable Long catId) {
+        return categoryService.getCategoryById(catId);
     }
 
 }

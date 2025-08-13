@@ -3,7 +3,9 @@ package ru.practicum.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.event.NewEventDto;
+import ru.practicum.dto.event.UpdateEventUserRequest;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
@@ -18,6 +20,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventStorage {
     private final EventRepository eventRepository;
+
+    public List<Event> getAdminEvents(List<Long> users,
+                                      List<String> states,
+                                      List<Long> categories,
+                                      String rangeStart,
+                                      String rangeEnd,
+                                      int from,
+                                      int size) {
+        return eventRepository.
+
+    }
 
     public boolean isHasCategory(Category category) {
         return eventRepository.existsAllByCategory(category);
@@ -35,4 +48,42 @@ public class EventStorage {
     public Event getUserEventsByEventId(Long eventId, Long userId) {
         return eventRepository.findEventByIdAndInitiatorId(eventId, userId);
     }
+
+    @Transactional
+    public Event updateEvent(UpdateEventUserRequest dto, Event event, Category category, Location location) {
+        if (dto.getAnnotation() != null) {
+            event.setAnnotation(dto.getAnnotation());
+        }
+        if (category != null) {
+            event.setCategory(category);
+        }
+        if (dto.getDescription() != null) {
+            event.setDescription(dto.getDescription());
+        }
+        if (dto.getEventDate() != null) {
+            event.setEventDate(dto.getEventDate());
+        }
+        if (location != null) {
+            event.setLocation(location);
+        }
+        if (dto.getPaid() != null) {
+            event.setPaid(dto.getPaid());
+        }
+        if (dto.getParticipantLimit() != null) {
+            event.setParticipantLimit(dto.getParticipantLimit());
+        }
+        if (dto.getRequestModeration() != null) {
+            event.setRequestModeration(dto.getRequestModeration());
+        }
+        if (dto.getStateAction() != null) {
+            event.setState(dto.getStateAction());
+        }
+        if (dto.getTitle() != null) {
+            event.setTitle(dto.getTitle());
+        }
+
+        return event;
+    }
+
+
 }
