@@ -25,12 +25,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LIMIT :size OFFSET :from
             """, nativeQuery = true)
     List<Event> findAdminEventsNative(
-            @Param("users") List<Long> users,
             @Param("usersEmpty") boolean usersEmpty,
-            @Param("states") List<String> states,
             @Param("statesEmpty") boolean statesEmpty,
-            @Param("categories") List<Long> cats,
             @Param("catsEmpty") boolean catsEmpty,
+
+            @Param("users") List<Long> users,
+            @Param("states") List<String> states,
+            @Param("categories") List<Long> cats,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             @Param("from") int from, @Param("size") int size

@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.event.NewEventDto;
+import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventUserRequest;
+import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
@@ -13,6 +15,7 @@ import ru.practicum.model.Location;
 import ru.practicum.model.User;
 import ru.practicum.repository.EventRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -21,14 +24,18 @@ import java.util.List;
 public class EventStorage {
     private final EventRepository eventRepository;
 
-    public List<Event> getAdminEvents(List<Long> users,
+    public List<Event> getAdminEvents(boolean usersEmpty,
+                                      boolean statesEmpty,
+                                      boolean categoriesEmpty,
+
+                                      List<Long> users,
                                       List<String> states,
                                       List<Long> categories,
-                                      String rangeStart,
-                                      String rangeEnd,
+                                      LocalDateTime rangeStart,
+                                      LocalDateTime rangeEnd,
                                       int from,
                                       int size) {
-        return eventRepository.
+        return eventRepository.findAdminEventsNative(usersEmpty, statesEmpty, categoriesEmpty, users, states, categories, rangeStart, rangeEnd, from, size);
 
     }
 
@@ -76,6 +83,12 @@ public class EventStorage {
             event.setRequestModeration(dto.getRequestModeration());
         }
         if (dto.getStateAction() != null) {
+            switch (dto.getStateAction()){
+                case CANCEL_REVIEW -> event.setState(State.CANCELED);
+                case SEND_TO_REVIEW -> event.setState(State.PENDING);
+            }
+
+
             event.setState(dto.getStateAction());
         }
         if (dto.getTitle() != null) {
@@ -83,6 +96,10 @@ public class EventStorage {
         }
 
         return event;
+    }
+
+    public Event getEventById(Long id) {
+        return eventRepository.findById(id).orElseThrow(() -> new NotFoundException("События id " + id + " не существует"));
     }
 
 

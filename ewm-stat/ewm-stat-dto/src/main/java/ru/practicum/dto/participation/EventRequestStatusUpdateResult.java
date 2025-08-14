@@ -1,8 +1,7 @@
-package ru.practicum.dto.event;
+package ru.practicum.dto.participation;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.dto.participation.ParticipationRequestDto;
 
 import java.util.List;
 @Builder

@@ -2,7 +2,7 @@ package ru.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.dto.event.StateAction;
+import ru.practicum.dto.event.State;
 
 import java.time.LocalDateTime;
 
@@ -61,7 +61,7 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
-    private StateAction state;
+    private State state;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;

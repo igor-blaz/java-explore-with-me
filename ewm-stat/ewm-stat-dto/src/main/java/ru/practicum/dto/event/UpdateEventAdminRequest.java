@@ -17,11 +17,11 @@ public class UpdateEventAdminRequest {
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-    private LocationDto locationDto;
+    private LocationDto location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
-    private StateAction stateAction;
+    private AdminStateAction adminStateAction;
     @Size(min = 3, max = 120, message = "Название должно быть от 1 до 50 символов")
     private String title;
 

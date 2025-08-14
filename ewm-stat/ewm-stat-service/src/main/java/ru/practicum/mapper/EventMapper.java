@@ -1,10 +1,7 @@
 package ru.practicum.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.StateAction;
+import ru.practicum.dto.event.*;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.Location;
@@ -59,7 +56,7 @@ public class EventMapper {
                 .views(0L)
                 .participantLimit(newEventDto.getParticipantLimit())
                 .requestModeration(newEventDto.getRequestModeration())
-                .state(StateAction.PUBLISHED)
+                .state(State.PUBLISHED)
                 .build();
     }
     public EventShortDto toEventShortDto (Event event){
