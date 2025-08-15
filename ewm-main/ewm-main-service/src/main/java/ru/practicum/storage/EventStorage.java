@@ -89,7 +89,7 @@ public class EventStorage {
             }
 
 
-            event.setState(dto.getStateAction());
+            //event.setState(dto.getStateAction());
         }
         if (dto.getTitle() != null) {
             event.setTitle(dto.getTitle());
