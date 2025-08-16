@@ -2,16 +2,15 @@ package ru.practicum.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "endpoint_hits")
+@Table(name = "view_stats")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EndpointHit {
+public class ViewStats {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +20,6 @@ public class EndpointHit {
 
     private String uri;
 
-    private String ip;
-
-    private LocalDateTime timestamp;
+    private Long hits;
 }
+

@@ -1,11 +1,8 @@
-version: '3.8'
-
 services:
   ewm-service:
     build:
-      context: ./ewm-main
-    image: ewm-service
-    container_name: ewm-service
+      context: ./ewm-main/ewm-main-service
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -17,19 +14,17 @@ services:
 
   ewm-db:
     image: postgres:14-alpine
-    container_name: ewm-db
     environment:
       - POSTGRES_DB=ewm
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
     ports:
-      - "5432:5432"
+      - "5430:5432"
 
   stats-server:
     build:
       context: ./ewm-stat/ewm-stat-service
-    image: stats-server
-    container_name: stats-server
+      dockerfile: Dockerfile
     ports:
       - "9090:9090"
     depends_on:
@@ -41,7 +36,6 @@ services:
 
   stats-db:
     image: postgres:14-alpine
-    container_name: stats-db
     environment:
       - POSTGRES_DB=stats
       - POSTGRES_USER=stats
