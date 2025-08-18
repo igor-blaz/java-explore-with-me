@@ -19,20 +19,20 @@ public class StatsClient {
         this.baseUrl = baseUrl;
     }
 
-    public void saveHit(EndpointHitDto dto) {
-        rest.postForEntity(baseUrl + "/hit", dto, Void.class);
+    public EndpointHitDto saveHit(EndpointHitDto dto) {
+        return rest.postForObject(baseUrl + "/hit", dto, EndpointHitDto.class);
     }
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end,
                                        List<String> uris, boolean unique) {
-        UriComponentsBuilder b = UriComponentsBuilder
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
                 .fromHttpUrl(baseUrl + "/stats")
                 .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .queryParam("unique", unique);
-        if (uris != null && !uris.isEmpty()) uris.forEach(u -> b.queryParam("uris", u));
+        if (uris != null && !uris.isEmpty()) uris.forEach(u -> uriComponentsBuilder.queryParam("uris", u));
         ResponseEntity<List<ViewStatsDto>> resp = rest.exchange(
-                b.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                uriComponentsBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                 });
         return resp.getBody();
     }

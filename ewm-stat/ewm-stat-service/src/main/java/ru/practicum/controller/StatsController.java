@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.EndpointHitDto;
 import ru.practicum.ViewStatsDto;
+import ru.practicum.service.StatsService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +17,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StatsController {
 
+    private final StatsService service;
+
     @GetMapping("/stats")
-    public ViewStatsDto getViewsStats(
+    public List<ViewStatsDto> getViewsStats(
             @RequestParam
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
 
@@ -27,11 +30,11 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique
     ) {
-        return null;
+        return service.getViews(start, end, uris, unique);
     }
 
     @PostMapping("/hit")
     public EndpointHitDto postHit(@RequestBody EndpointHitDto endpointHitDto) {
-        return null;
+        return service.postHit(endpointHitDto);
     }
 }

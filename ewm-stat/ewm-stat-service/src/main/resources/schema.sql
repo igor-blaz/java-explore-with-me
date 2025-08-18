@@ -7,10 +7,4 @@ CREATE TABLE endpoint_hits
     timestamp TIMESTAMP     NOT NULL
 );
 
-CREATE TABLE view_stats
-(
-    id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    app  VARCHAR(255)  NOT NULL,
-    uri  VARCHAR(1024) NOT NULL,
-    hits BIGINT        NOT NULL
-);
+
