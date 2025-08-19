@@ -35,7 +35,6 @@ public class CompilationServiceImpl {
 
     public CompilationDto updateCompilation(CompilationDto compilationDto,
                                             Long compId) {
-        //compilationStorage.updateCompilation(compilationDto, compilationDto);
         return null;
     }
 
