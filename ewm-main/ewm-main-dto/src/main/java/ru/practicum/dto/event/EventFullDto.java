@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class EventFullDto {
-    @NotNull
+    @NotBlank
     private String annotation;
     @NotNull
     private CategoryDto category;
     private Long confirmedRequests;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
-    @NotNull
+    @NotBlank
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull

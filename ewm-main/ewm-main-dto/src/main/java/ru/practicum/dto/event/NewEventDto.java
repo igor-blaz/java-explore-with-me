@@ -21,7 +21,6 @@ public class NewEventDto {
     @NotBlank
     @Size(min = 20, max = 7000, message = "Название должно быть от 1 до 50 символов")
     private String description;
-    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @NotNull
     private LocalDateTime eventDate;

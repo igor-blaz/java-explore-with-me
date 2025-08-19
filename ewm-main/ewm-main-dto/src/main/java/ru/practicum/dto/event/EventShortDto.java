@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class EventShortDto {
-    @NotNull
+    @NotBlank
     private String annotation;
     @NotNull
     private CategoryDto category;

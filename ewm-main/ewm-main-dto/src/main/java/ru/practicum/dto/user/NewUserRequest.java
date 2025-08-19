@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 public class NewUserRequest {
-    @NotNull
+    @NotBlank
     @Email
     private String email;
     @NotBlank
