@@ -83,7 +83,7 @@ public class EventStorage {
             event.setRequestModeration(dto.getRequestModeration());
         }
         if (dto.getStateAction() != null) {
-            switch (dto.getStateAction()){
+            switch (dto.getStateAction()) {
                 case CANCEL_REVIEW -> event.setState(State.CANCELED);
                 case SEND_TO_REVIEW -> event.setState(State.PENDING);
             }

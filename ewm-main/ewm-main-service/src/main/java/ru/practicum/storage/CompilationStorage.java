@@ -7,7 +7,6 @@ import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.Compilation;
 import ru.practicum.repository.CompilationRepository;
 
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j

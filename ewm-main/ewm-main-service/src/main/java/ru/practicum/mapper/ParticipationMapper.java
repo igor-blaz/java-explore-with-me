@@ -20,7 +20,7 @@ public class ParticipationMapper {
                 .build();
     }
 
-    public static List<ParticipationRequestDto> toDtoList(List<Participation>participations){
+    public static List<ParticipationRequestDto> toDtoList(List<Participation> participations) {
         if (participations == null || participations.isEmpty()) {
             return Collections.emptyList();
         }

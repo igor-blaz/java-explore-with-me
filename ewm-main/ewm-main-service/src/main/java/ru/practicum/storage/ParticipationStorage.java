@@ -28,7 +28,8 @@ public class ParticipationStorage {
     public List<Participation> getParticipationsForStatusUpdate(Long eventId, List<Long> participationIds) {
         return participationRepository.findAllForUpdate(eventId, participationIds);
     }
-    public int countByEventAndStatus(Long eventId, ParticipationStatus participationStatus){
+
+    public int countByEventAndStatus(Long eventId, ParticipationStatus participationStatus) {
         return participationRepository.countByEvent_IdAndStatus(eventId, participationStatus);
     }
 }
