@@ -1,14 +1,65 @@
-services:
-  stats-server:
-    ports:
-      - "9090:9090"
+version: "3.9"
 
-  stats-db:
-    image: postgres:16.1
+services:
+  ewm-db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=ewm
+      - POSTGRES_USER=ewm
+      - POSTGRES_PASSWORD=ewm
+    ports:
+      - "5430:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ewm -d ewm" ]
+      interval: 3s
+      timeout: 5s
+      retries: 20
 
   ewm-service:
+    build:
+      context: ./ewm-main/ewm-main-service
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    depends_on:
+      ewm-db:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - SPRING_DATASOURCE_USERNAME=ewm
+      - SPRING_DATASOURCE_PASSWORD=ewm
+      - SPRING_DATASOURCE_HIKARI_INITIALIZATIONFAILTIMEOUT=0
 
-  ewm-db:
-    image: postgres:16.1
+  stats-db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=stats
+      - POSTGRES_USER=stats
+      - POSTGRES_PASSWORD=stats
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U stats -d stats" ]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+
+  stats-server:
+    build:
+      context: ./ewm-stat/ewm-stat-service
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    depends_on:
+      stats-db:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
+      - SPRING_DATASOURCE_USERNAME=stats
+      - SPRING_DATASOURCE_PASSWORD=stats
+      - SPRING_DATASOURCE_HIKARI_INITIALIZATIONFAILTIMEOUT=0
