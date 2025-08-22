@@ -28,12 +28,20 @@ public class StatsStorage {
                                       List<String> uris,
                                       boolean unique) {
 
-        boolean allUris = uris != null && !uris.isEmpty();
+        List<String> safeUris = (uris == null) ? java.util.Collections.emptyList() : uris;
+        boolean hasUris = !safeUris.isEmpty();
 
-        return unique
-                ? hitRepository.findStatsUnique(start, end, uris, allUris)
-                : hitRepository.findStatsAll(start, end, uris, allUris);
+        if (unique) {
+            return hasUris
+                    ? hitRepository.findStatsUniqueByUris(start, end, safeUris)
+                    : hitRepository.findStatsUnique(start, end);
+        } else {
+            return hasUris
+                    ? hitRepository.findStatsAllByUris(start, end, safeUris)
+                    : hitRepository.findStatsAll(start, end);
+        }
     }
+
 }
 
 
