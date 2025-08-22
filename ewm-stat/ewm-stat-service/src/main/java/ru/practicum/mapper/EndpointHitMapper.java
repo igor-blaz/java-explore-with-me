@@ -15,14 +15,14 @@ public class EndpointHitMapper {
                 .build();
     }
 
-    public static EndpointHitDto toDto(EndpointHit entity) {
-        return EndpointHitDto.builder()
-                .id(entity.getId())
-                .app(entity.getApp())
-                .uri(entity.getUri())
-                .ip(entity.getIp())
-                .timestamp(entity.getTimestamp())
-                .build();
+    public static EndpointHitDto toDto(EndpointHit e) {
+        EndpointHitDto dto = new EndpointHitDto();
+        dto.setId(e.getId());
+        dto.setApp(e.getApp());
+        dto.setUri(e.getUri());
+        dto.setIp(e.getIp());
+        dto.setTimestamp(e.getTimestamp());
+        return dto;
     }
 
 }
