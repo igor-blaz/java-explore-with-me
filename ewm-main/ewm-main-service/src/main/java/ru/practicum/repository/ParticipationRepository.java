@@ -18,6 +18,11 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
              where p.event.id = :eventId and p.id in :ids
             """)
     List<Participation> findAllForUpdate(@Param("eventId") Long eventId, @Param("ids") List<Long> ids);
+    long countByEventId(Long eventId);
+
+    List<Participation> findAllByRequesterId(Long userId);
 
     int countByEvent_IdAndStatus(Long eventId, ParticipationStatus status);
+
+    boolean existsByRequesterIdAndEventId(Long userId, Long eventId);
 }

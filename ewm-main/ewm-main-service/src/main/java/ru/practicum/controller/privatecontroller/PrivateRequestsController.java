@@ -19,7 +19,7 @@ public class PrivateRequestsController {
     public List<ParticipationRequestDto> getUserRequestDto(
             @PathVariable Long userId
     ) {
-        return null;
+        return participationService.getUserRequestDto(userId);
     }
 
     @PostMapping
@@ -27,7 +27,7 @@ public class PrivateRequestsController {
             @PathVariable Long userId,
             @RequestParam(required = true) Long eventId
     ) {
-        return null;
+        return participationService.addUserRequest(userId, eventId);
     }
 
     @PatchMapping("/{requestId}/cancel")

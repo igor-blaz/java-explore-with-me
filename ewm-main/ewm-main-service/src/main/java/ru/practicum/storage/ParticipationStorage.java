@@ -16,6 +16,18 @@ import java.util.List;
 public class ParticipationStorage {
     private final ParticipationRepository participationRepository;
 
+    public List<Participation> getParticipationsByUserId(Long userId) {
+        return participationRepository.findAllByRequesterId(userId);
+    }
+
+    public long countByEventId(Long eventId) {
+        return participationRepository.countByEventId(eventId);
+    }
+
+    public boolean isExistsByUserIdAndEventId(Long userId, Long eventId) {
+        return participationRepository.existsByRequesterIdAndEventId(userId, eventId);
+    }
+
     public Participation getParticipationById(Long id) {
         return participationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("запрос (participationn) с id: " + id + " не найден"));

@@ -3,9 +3,12 @@ package ru.practicum.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.dto.user.UserDto;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.User;
 import ru.practicum.repository.UserRepository;
+
+import java.util.List;
 
 @Slf4j
 @Repository
@@ -16,5 +19,14 @@ public class UserStorage {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id: " + id + " не найден"));
+    }
+    public List<User>getUsers(List<Long>ids, int from, int size){
+        return userRepository.getUsersNative(ids, from, size);
+    }
+    public User addUser(User user){
+        return userRepository.save(user);
+    }
+    public void deleteUserById(Long id){
+        userRepository.deleteById(id);
     }
 }

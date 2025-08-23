@@ -24,6 +24,10 @@ import java.util.List;
 public class EventStorage {
     private final EventRepository eventRepository;
 
+    public List<Event> getEventsByIds(List<Long> ids) {
+        return  eventRepository.findAllById(ids);
+    }
+
     public List<Event> getAdminEvents(boolean usersEmpty,
                                       boolean statesEmpty,
                                       boolean categoriesEmpty,
