@@ -16,6 +16,15 @@ import java.util.List;
 public class ParticipationStorage {
     private final ParticipationRepository participationRepository;
 
+    public Participation getParticipationByUserIdAndRequestId(Long userId, Long requestId) {
+        return participationRepository.findByIdAndRequesterId(requestId, userId)
+                .orElseThrow(() -> new NotFoundException("Request with id= " + requestId + " was not found"));
+    }
+
+    public Participation addParticipation(Participation participation) {
+        return participationRepository.save(participation);
+    }
+
     public List<Participation> getParticipationsByUserId(Long userId) {
         return participationRepository.findAllByRequesterId(userId);
     }
@@ -30,7 +39,7 @@ public class ParticipationStorage {
 
     public Participation getParticipationById(Long id) {
         return participationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("запрос (participationn) с id: " + id + " не найден"));
+                .orElseThrow(() -> new NotFoundException("запрос (participation) с id: " + id + " не найден"));
     }
 
     public List<Participation> getParticipationByUserIdAndEventId(Long userId, Long eventId) {

@@ -34,7 +34,8 @@ public class PublicEventsController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return null;
+        return eventServiceImpl.getEventsPublic(text, categories, paid, rangeStart,
+                rangeEnd, onlyAvailable, sort, from, size);
     }
 
 

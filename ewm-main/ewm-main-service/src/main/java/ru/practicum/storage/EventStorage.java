@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.controller.publiccontroller.SortType;
+import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventUserRequest;
@@ -23,6 +25,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventStorage {
     private final EventRepository eventRepository;
+
+
+    public List<Event> getEventsPublic(
+            String text,
+            List<Long> categories,
+            Boolean paid,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            boolean onlyAvailable,
+            SortType sort,
+            int from,
+            int size){
+        return eventRepository.
+    }
 
     public List<Event> getEventsByIds(List<Long> ids) {
         return  eventRepository.findAllById(ids);

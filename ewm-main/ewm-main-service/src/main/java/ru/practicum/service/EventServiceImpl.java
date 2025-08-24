@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.controller.publiccontroller.SortType;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
@@ -28,12 +29,28 @@ import static ru.practicum.dto.participation.ParticipationStatus.*;
 @Slf4j
 @RequiredArgsConstructor
 public class EventServiceImpl {
-
+    //TODO можено сделать рефакторинг
     private final EventStorage eventStorage;
     private final LocationStorage locationStorage;
     private final CategoryStorage categoryStorage;
     private final UserStorage userStorage;
     private final ParticipationStorage participationStorage;
+
+
+    public List<EventShortDto> getEventsPublic(
+            String text,
+            List<Long> categories,
+            Boolean paid,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            boolean onlyAvailable,
+            SortType sort,
+            int from,
+            int size
+    ) {
+        eventStorage.getEventsPublic(text, categories, paid,
+                rangeStart, rangeEnd, onlyAvailable, sort, from, size)
+    }
 
     @Transactional
     public EventRequestStatusUpdateResult updateRequestStatus(

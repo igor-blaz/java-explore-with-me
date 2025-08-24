@@ -7,6 +7,7 @@ import ru.practicum.dto.participation.ParticipationStatus;
 import ru.practicum.model.Participation;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
     List<Participation> findAllByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
@@ -25,4 +26,6 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     int countByEvent_IdAndStatus(Long eventId, ParticipationStatus status);
 
     boolean existsByRequesterIdAndEventId(Long userId, Long eventId);
+
+    Optional<Participation> findByIdAndRequesterId(Long id, Long requesterId);
 }
