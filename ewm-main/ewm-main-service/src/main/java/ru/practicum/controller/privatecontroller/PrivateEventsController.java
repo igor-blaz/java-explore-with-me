@@ -8,6 +8,7 @@ import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateResult;
 import ru.practicum.dto.participation.ParticipationRequestDto;
 import ru.practicum.service.EventServiceImpl;
+import ru.practicum.service.privateservice.PrivateEventService;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PrivateEventsController {
 
-    private final EventServiceImpl eventServiceImpl;
+    private final PrivateEventService eventServiceImpl;
 
     @GetMapping
     public List<EventShortDto> getUserEvents(

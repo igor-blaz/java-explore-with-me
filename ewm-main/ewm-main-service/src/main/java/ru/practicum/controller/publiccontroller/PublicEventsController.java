@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.service.EventServiceImpl;
+import ru.practicum.service.publicservice.PublicEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicEventsController {
 
-    private final EventServiceImpl eventServiceImpl;
+    private final PublicEventService eventServiceImpl;
 
     @GetMapping
     public List<EventShortDto> searchEvents(

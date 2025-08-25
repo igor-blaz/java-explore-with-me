@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.service.CategoryServiceImpl;
+import ru.practicum.service.adminservice.AdminCategoryService;
 
 @Slf4j
 @RestController
@@ -14,7 +15,7 @@ import ru.practicum.service.CategoryServiceImpl;
 @RequiredArgsConstructor
 public class AdminCategoriesController {
 
-    private final CategoryServiceImpl categoryService;
+    private final AdminCategoryService categoryService;
 
     @PostMapping
     public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {

@@ -18,39 +18,4 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CompilationServiceImpl {
 
-    private final CompilationStorage compilationStorage;
-    private final EventStorage eventStorage;
-
-
-
-    public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
-        List<Event> events = eventStorage.getEventsByIds(newCompilationDto.getEvents());
-        Compilation compilation = CompilationMapper.toEntity(newCompilationDto, events);
-        Compilation savedCompilation = compilationStorage.addCompilation(compilation);
-        return CompilationMapper.toDto(savedCompilation);
-    }
-
-    public CompilationDto updateCompilation(NewCompilationDto newCompilationDto,
-                                            Long compId) {
-        Compilation compilation = compilationStorage.getCompilationById(compId);
-
-        if (!compilation.getPinned().equals(newCompilationDto.getPinned())) {
-            compilation.setPinned(newCompilationDto.getPinned());
-        }
-        if (!compilation.getTitle().equals(newCompilationDto.getTitle())) {
-            compilation.setTitle(newCompilationDto.getTitle());
-        }
-
-        if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
-            List<Event> events = eventStorage.getEventsByIds(newCompilationDto.getEvents());
-            compilation.setEvents(events);
-        }
-
-        Compilation saved = compilationStorage.addCompilation(compilation);
-        return CompilationMapper.toDto(saved);
-    }
-
-    public void deleteCompilation(Long compId) {
-        compilationStorage.deleteCompilation(compId);
-    }
 }

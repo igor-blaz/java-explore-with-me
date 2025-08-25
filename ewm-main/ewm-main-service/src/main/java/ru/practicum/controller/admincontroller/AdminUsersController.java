@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.user.UserDto;
 import ru.practicum.service.UserServiceImpl;
+import ru.practicum.service.adminservice.AdminUserService;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminUsersController {
 
-    private final UserServiceImpl userService;
+    private final AdminUserService userService;
 
     @GetMapping
     public List<UserDto> getUserDto(@RequestParam(required = false) List<Long> ids,

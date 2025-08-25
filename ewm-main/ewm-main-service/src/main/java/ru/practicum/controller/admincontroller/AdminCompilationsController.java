@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
 import ru.practicum.service.CompilationServiceImpl;
+import ru.practicum.service.adminservice.AdminCompilationService;
 
 @Slf4j
 @RestController
@@ -15,7 +16,7 @@ import ru.practicum.service.CompilationServiceImpl;
 @RequiredArgsConstructor
 public class AdminCompilationsController {
 
-    private final CompilationServiceImpl compilationService;
+    private final AdminCompilationService compilationService;
 
     @PostMapping
     public CompilationDto addCompilationDto(
