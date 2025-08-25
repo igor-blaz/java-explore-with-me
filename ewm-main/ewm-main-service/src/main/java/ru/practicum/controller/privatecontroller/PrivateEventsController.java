@@ -7,7 +7,6 @@ import ru.practicum.dto.event.*;
 import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateResult;
 import ru.practicum.dto.participation.ParticipationRequestDto;
-import ru.practicum.service.EventServiceImpl;
 import ru.practicum.service.privateservice.PrivateEventService;
 
 import java.util.List;

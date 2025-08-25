@@ -78,6 +78,7 @@ public class PrivateParticipationService {
 
 
     }
+
     private void isRepeatedRequest(Long userId, Long eventId) {
         if (participationStorage.isExistsByUserIdAndEventId(userId, eventId)) {
             throw new ConflictException("Данный запрос на участие уже существует");

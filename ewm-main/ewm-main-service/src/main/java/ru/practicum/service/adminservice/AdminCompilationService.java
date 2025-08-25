@@ -50,6 +50,7 @@ public class AdminCompilationService {
     }
 
     public void deleteCompilation(Long compId) {
+        compilationStorage.getCompilationById(compId);
         compilationStorage.deleteCompilation(compId);
     }
 }

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.user.UserDto;
-import ru.practicum.service.UserServiceImpl;
 import ru.practicum.service.adminservice.AdminUserService;
 
 import java.util.List;
@@ -34,7 +33,6 @@ public class AdminUsersController {
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
-        //TODO: доделать правильные ответы и проверу на существование
         userService.deleteUserById(userId);
     }
 

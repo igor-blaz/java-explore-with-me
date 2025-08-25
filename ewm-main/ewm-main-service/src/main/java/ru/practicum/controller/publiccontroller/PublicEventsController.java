@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.service.EventServiceImpl;
 import ru.practicum.service.publicservice.PublicEventService;
 
 import java.time.LocalDateTime;

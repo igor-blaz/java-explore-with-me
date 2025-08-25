@@ -17,6 +17,7 @@ public class AdminUserService {
     private final UserStorage userStorage;
 
     public void deleteUserById(Long userId) {
+        userStorage.getUserById(userId);
         userStorage.deleteUserById(userId);
     }
 
