@@ -21,7 +21,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             WHERE (:text IS NULL OR e.description ILIKE :textPattern
                 OR e.annotation ILIKE :textPattern
                 OR e.title ILIKE :textPattern)
-              AND (:categoriesIsEmpty OR e.category_id IN (:categories))
+              AND (e.state == 'PUBLISHED')
+              AND (e.category_id IN (:categories))
               AND (:paid IS NULL OR e.paid = :paid)
               AND (:start IS NULL OR e.event_date >= :start)
               AND (:end   IS NULL OR e.event_date <= :end)
@@ -35,7 +36,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                   e.id
             LIMIT :size OFFSET :from
             """, nativeQuery = true)
-    List<Event> getEventsPublic(
+    List<Event> getEventsPublicByCategories(
             @Param("textPattern") String textPattern,
             @Param("categories") List<Long> categories,
             @Param("paid") Boolean paid,
@@ -43,10 +44,42 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("end") LocalDateTime rangeEnd,
             @Param("now") LocalDateTime now,
             @Param("onlyAvailable") boolean onlyAvailable,
-            @Param("sort") SortType sort,
+            @Param("sort") String sort,
             @Param("from") int from,
-            @Param("size") int size,
-            @Param("categoriesIsEmpty") boolean categoriesIsEmpty
+            @Param("size") int size
+
+    );
+
+    @Query(value = """
+            SELECT * FROM events e
+            WHERE (:textPattern IS NULL OR e.description ILIKE :textPattern
+                OR e.annotation ILIKE :textPattern
+                OR e.title ILIKE :textPattern)
+              AND (e.state == 'PUBLISHED')
+              AND (:paid IS NULL OR e.paid = :paid)
+              AND (:start IS NULL OR e.event_date >= :start)
+              AND (:end   IS NULL OR e.event_date <= :end)
+              AND (:now IS NULL OR e.event_date >= :now)
+              AND (:onlyAvailable = false
+                   OR e.participant_limit = 0
+                   OR e.confirmed_requests < e.participant_limit)
+            ORDER BY
+                  CASE WHEN :sort IS NULL THEN e.id END,
+                  CASE WHEN :sort = 'EVENT_DATE' THEN e.event_date END,
+                  CASE WHEN :sort = 'VIEWS'      THEN e.views      END,
+                e.id
+            LIMIT :size OFFSET :from
+            """, nativeQuery = true)
+    List<Event> getEventsPublicWithoutCategories(
+            @Param("textPattern") String textPattern,
+            @Param("paid") Boolean paid,
+            @Param("start") LocalDateTime rangeStart,
+            @Param("end") LocalDateTime rangeEnd,
+            @Param("now") LocalDateTime now,
+            @Param("onlyAvailable") boolean onlyAvailable,
+            @Param("sort") String sort,
+            @Param("from") int from,
+            @Param("size") int size
 
     );
 

@@ -21,17 +21,7 @@ public class CompilationServiceImpl {
     private final CompilationStorage compilationStorage;
     private final EventStorage eventStorage;
 
-    public List<CompilationDto> getCompilations(
-            Boolean pinned, Integer from, Integer size
-    ) {
-        List<Compilation> compilation = compilationStorage.findCompilations(pinned, from, size);
-        return CompilationMapper.toDtoList(compilation);
-    }
 
-    public CompilationDto getCompilationById(Long id) {
-        Compilation compilation = compilationStorage.getCompilationById(id);
-        return CompilationMapper.toDto(compilation);
-    }
 
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         List<Event> events = eventStorage.getEventsByIds(newCompilationDto.getEvents());

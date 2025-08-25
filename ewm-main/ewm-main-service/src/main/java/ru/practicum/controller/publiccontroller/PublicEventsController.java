@@ -1,9 +1,11 @@
 package ru.practicum.controller.publiccontroller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.service.EventServiceImpl;
 
@@ -32,17 +34,18 @@ public class PublicEventsController {
             @RequestParam(defaultValue = "false") boolean onlyAvailable,
             @RequestParam(required = false) SortType sort,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request
     ) {
         return eventServiceImpl.getEventsPublic(text, categories, paid, rangeStart,
-                rangeEnd, onlyAvailable, sort, from, size);
+                rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
 
     @GetMapping("/{id}")
-    public List<EventShortDto> getCompilationsById(@PathVariable Long id) {
+    public EventFullDto getCompilationsById(@PathVariable Long id) {
 
-        return null;
+        return eventServiceImpl.getEventByIdPublic(id);
     }
 
 }

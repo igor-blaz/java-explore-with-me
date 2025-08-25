@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.compilation.CompilationDto;
-import ru.practicum.service.CompilationServiceImpl;
+import ru.practicum.service.publicservice.PublicCompilationService;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicCompilationsController {
 
-    private final CompilationServiceImpl compilationServiceImpl;
+    private final PublicCompilationService compilationServiceImpl;
 
     @GetMapping
     public List<CompilationDto> getCompilations(

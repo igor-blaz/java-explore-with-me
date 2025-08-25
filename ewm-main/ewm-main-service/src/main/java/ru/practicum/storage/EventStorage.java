@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.controller.publiccontroller.SortType;
-import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventUserRequest;
@@ -27,21 +26,36 @@ public class EventStorage {
     private final EventRepository eventRepository;
 
 
-    public List<Event> getEventsPublic(
+    public List<Event> getEventsPublicByCategories(
             String text,
             List<Long> categories,
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
+            LocalDateTime now,
             boolean onlyAvailable,
-            SortType sort,
+            String sort,
             int from,
-            int size){
-        return eventRepository.
+            int size
+    ) {
+        return eventRepository.getEventsPublicByCategories(text, categories, paid, rangeStart, rangeEnd, now, onlyAvailable, sort, from, size);
+    }
+    public List<Event> getEventsPublicWithoutCategories(
+            String text,
+            Boolean paid,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            LocalDateTime now,
+            boolean onlyAvailable,
+            String sort,
+            int from,
+            int size
+    ) {
+        return eventRepository.getEventsPublicWithoutCategories(text, paid, rangeStart, rangeEnd, now, onlyAvailable, sort, from, size);
     }
 
     public List<Event> getEventsByIds(List<Long> ids) {
-        return  eventRepository.findAllById(ids);
+        return eventRepository.findAllById(ids);
     }
 
     public List<Event> getAdminEvents(boolean usersEmpty,
