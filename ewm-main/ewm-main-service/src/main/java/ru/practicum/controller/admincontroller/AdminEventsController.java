@@ -1,5 +1,6 @@
 package ru.practicum.controller.admincontroller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +35,11 @@ public class AdminEventsController {
             @RequestParam(required = false) String rangeStart,
             @RequestParam(required = false) String rangeEnd,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request
     ) {
         return eventServiceImpl.adminGetEvents(users, states, categories,
-                rangeStart, rangeEnd, from, size);
+                rangeStart, rangeEnd, from, size, request);
     }
 
 }

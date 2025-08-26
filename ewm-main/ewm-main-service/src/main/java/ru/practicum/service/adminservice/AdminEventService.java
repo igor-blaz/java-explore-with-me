@@ -1,9 +1,12 @@
 package ru.practicum.service.adminservice;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.EndpointHitDto;
+import ru.practicum.StatsClient;
 import ru.practicum.dto.event.AdminStateAction;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.State;
@@ -26,6 +29,7 @@ import java.util.List;
 public class AdminEventService {
     private final EventStorage eventStorage;
     private final CategoryStorage categoryStorage;
+    private final StatsClient statsClient;
 
 
     @Transactional
@@ -90,8 +94,17 @@ public class AdminEventService {
             String rangeStart,
             String rangeEnd,
             int from,
-            int size
+            int size,
+            HttpServletRequest request
     ) {
+        EndpointHitDto hitDto = new EndpointHitDto(
+                null,
+                "ewm-main-service",
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now()
+        );
+        statsClient.saveHit(hitDto);
         boolean usersEmpty = users == null || users.isEmpty();
         boolean statesEmpty = states == null || states.isEmpty();
         boolean catsEmpty = categories == null || categories.isEmpty();

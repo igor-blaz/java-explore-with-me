@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """, nativeQuery = true)
     List<User> getUsersNative(
             @Param("ids") List<Long> ids,
-            @Param("from")int from,
-            @Param("size")int size);
+            @Param("from") int from,
+            @Param("size") int size);
 
 }

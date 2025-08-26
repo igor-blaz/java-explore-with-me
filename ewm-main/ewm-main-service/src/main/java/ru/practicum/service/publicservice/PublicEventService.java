@@ -9,6 +9,8 @@ import ru.practicum.StatsClient;
 import ru.practicum.controller.publiccontroller.SortType;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.dto.event.State;
+import ru.practicum.exceptions.ConflictException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.StringIlikeSqlPattern;
 import ru.practicum.model.Event;
@@ -24,8 +26,12 @@ public class PublicEventService {
     private final EventStorage eventStorage;
     private final StatsClient statsClient;
 
+
     public EventFullDto getEventByIdPublic(Long id) {
         Event event = eventStorage.getEventById(id);
+        if (event.getState() != State.PUBLISHED) {
+            throw new ConflictException("Событие должно быть опубликовано");
+        }
         return EventMapper.toEventDto(event);
     }
 
@@ -44,7 +50,7 @@ public class PublicEventService {
         EndpointHitDto hitDto = new EndpointHitDto(
                 null,
                 "ewm-main-service",
-                "/events",
+                request.getRequestURI(),
                 request.getRemoteAddr(),
                 LocalDateTime.now()
         );
@@ -71,7 +77,6 @@ public class PublicEventService {
                     paid, rangeStart, rangeEnd, now, onlyAvailable, sortType,
                     from, size);
         }
-
 
         return EventMapper.eventShortDtoList(events);
     }

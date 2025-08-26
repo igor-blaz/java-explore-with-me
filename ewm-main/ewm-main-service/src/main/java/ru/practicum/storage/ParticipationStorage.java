@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.dto.participation.ParticipationStatus;
 import ru.practicum.exceptions.NotFoundException;
+import ru.practicum.model.Event;
 import ru.practicum.model.Participation;
 import ru.practicum.repository.ParticipationRepository;
 
@@ -52,5 +53,13 @@ public class ParticipationStorage {
 
     public int countByEventAndStatus(Long eventId, ParticipationStatus participationStatus) {
         return participationRepository.countByEvent_IdAndStatus(eventId, participationStatus);
+    }
+
+    public List<Participation> saveAll(List<Participation> participations) {
+        return saveAll(participations);
+    }
+
+    public List<Participation> findParticipationsNotIn(Event event, ParticipationStatus status, List<Participation> participations) {
+        return participationRepository.findPendingNotIn(event, status, participations);
     }
 }

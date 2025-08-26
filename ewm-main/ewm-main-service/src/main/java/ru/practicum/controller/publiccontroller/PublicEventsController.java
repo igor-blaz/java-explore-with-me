@@ -43,7 +43,7 @@ public class PublicEventsController {
 
 
     @GetMapping("/{id}")
-    public EventFullDto getCompilationsById(@PathVariable Long id) {
+    public EventFullDto getEventById(@PathVariable Long id) {
 
         return eventServiceImpl.getEventByIdPublic(id);
     }

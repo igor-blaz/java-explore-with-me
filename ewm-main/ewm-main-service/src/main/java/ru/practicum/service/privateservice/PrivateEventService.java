@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatsClient;
-import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.UpdateEventUserRequest;
+import ru.practicum.dto.event.*;
 import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateResult;
@@ -21,6 +18,7 @@ import ru.practicum.mapper.ParticipationMapper;
 import ru.practicum.model.*;
 import ru.practicum.storage.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +48,7 @@ public class PrivateEventService {
 
     public EventFullDto addNewEventDto(Long userId, NewEventDto newEventDto
     ) {
-        //TODO; Сделать валидацию по времени event
+        eventTimeCheck(newEventDto.getEventDate());
         Location location = LocationMapper.toEntity(newEventDto.getLocationDto());
         locationStorage.saveLocation(location);
         Category category = categoryStorage.getCategoryById(newEventDto.getCategory());
@@ -58,6 +56,14 @@ public class PrivateEventService {
 
         Event event = eventStorage.addNewEvent(newEventDto, user, category, location);
         return EventMapper.toEventDto(event);
+    }
+
+    private void eventTimeCheck(LocalDateTime eventTime) {
+        LocalDateTime now = LocalDateTime.now();
+        if (eventTime.isBefore(now.plusHours(2))) {
+            throw new ConflictException("Время события должно быть минимум через 2 часа от текущего момента");
+        }
+
     }
 
     public EventFullDto getUserEventsByEventId(Long eventId, Long userId) {
@@ -69,6 +75,9 @@ public class PrivateEventService {
     public EventFullDto updateEventUserRequest(
             UpdateEventUserRequest updateEventUserRequest, Long oldEventId, Long userId) {
         Category category;
+        if (updateEventUserRequest.getEventDate() != null) {
+            eventTimeCheck(updateEventUserRequest.getEventDate());
+        }
         if (updateEventUserRequest.getCategory() != null) {
             category = categoryStorage.getCategoryById(updateEventUserRequest.getCategory());
         } else {
@@ -84,8 +93,16 @@ public class PrivateEventService {
         }
 
         Event oldEvent = eventStorage.getUserEventsByEventId(oldEventId, userId);
+        pendingOrCancelledCheck(oldEvent.getState());
         Event event = eventStorage.updateEvent(updateEventUserRequest, oldEvent, category, location);
         return EventMapper.toEventDto(event);
+    }
+
+    private void pendingOrCancelledCheck(State state) {
+        if (state != State.PENDING && state != State.CANCELED) {
+            throw new ConflictException("изменить можно только отмененные события или" +
+                    " события в состоянии ожидания модерации ");
+        }
     }
 
     @Transactional
@@ -104,15 +121,19 @@ public class PrivateEventService {
         int limit = event.getParticipantLimit();
         int alreadyConfirmedCount = participationStorage.countByEventAndStatus(eventId, CONFIRMED);
         int freeSpaces = limit - alreadyConfirmedCount;
-
+        if (!event.getRequestModeration() || limit == 0) {
+            throw new ConflictException("Подтверждение заявок не требуется." +
+                    " Нет лимита или нет модерации");
+        }
         if (limit > 0 && alreadyConfirmedCount >= limit) {
             throw new ConflictException("Достигнут лимит участников для события");
         }
-
+        List<Participation> pendindParticipations = participationStorage.findParticipationsNotIn(event,
+                PENDING, participations);
         if (eventRequestStatusUpdateRequest.getStatus() == ParticipationStatusForUpdate.REJECTED) {
             return makeAllRejectedResponse(participations);
         } else if (eventRequestStatusUpdateRequest.getStatus() == ParticipationStatusForUpdate.CONFIRMED) {
-            return makeConfirmedOrRejected(participations, freeSpaces);
+            return makeConfirmedOrRejected(participations, freeSpaces, pendindParticipations);
         } else {
             throw new ConflictException("Невозможно поменять статус заявки на " + eventRequestStatusUpdateRequest.getStatus());
         }
@@ -120,24 +141,33 @@ public class PrivateEventService {
 
     }
 
-    private EventRequestStatusUpdateResult makeConfirmedOrRejected(List<Participation> participations, int limit) {
+    private EventRequestStatusUpdateResult makeConfirmedOrRejected(List<Participation> participations, int free,
+                                                                   List<Participation> pendingParticipations) {
         List<Participation> rejectedParticipation = new ArrayList<>();
         List<Participation> confirmedParticipation = new ArrayList<>();
         for (Participation participation : participations) {
-            if (limit > 0) {
+            if (free > 0) {
                 participation.setStatus(CONFIRMED);
                 confirmedParticipation.add(participation);
-                limit--;
+                free--;
             } else {
                 participation.setStatus(REJECTED);
                 rejectedParticipation.add(participation);
             }
         }
+        if (free == 0 && !pendingParticipations.isEmpty()) {
+            pendingParticipations.forEach(p -> p.setStatus(REJECTED));
+            rejectedParticipation.addAll(pendingParticipations);
+            participationStorage.saveAll(pendingParticipations);
+        }
+        participationStorage.saveAll(participations);
+
         return EventRequestStatusUpdateResult.builder()
                 .rejectedRequests(ParticipationMapper.toDtoList(rejectedParticipation))
                 .confirmedRequests(ParticipationMapper.toDtoList(confirmedParticipation))
                 .build();
     }
+
 
     private EventRequestStatusUpdateResult makeAllRejectedResponse(List<Participation> participations) {
         participations.forEach(p -> p.setStatus(REJECTED));

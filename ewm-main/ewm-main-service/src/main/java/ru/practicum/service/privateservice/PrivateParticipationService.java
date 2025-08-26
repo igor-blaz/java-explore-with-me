@@ -51,33 +51,36 @@ public class PrivateParticipationService {
 
     public ParticipationRequestDto addUserRequest(Long userId, Long eventId) {
         isRepeatedRequest(userId, eventId);
+
         Event event = eventStorage.getEventById(eventId);
-        isGreaterThanLimit(event);
+
         if (event.getInitiator().getId().equals(userId)) {
-            throw new ConflictException("Нельзя участвовать в том событии, которые вы сами создали");
+            throw new ConflictException("Нельзя участвовать в событии, которое вы сами создали");
         }
-        if (!event.getState().equals(State.PUBLISHED)) {
-            throw new ConflictException("Данное событие не опубликовано. В нем нельзя участвовать");
+        if (event.getState() != State.PUBLISHED) {
+            throw new ConflictException("Событие не опубликовано");
         }
-        ParticipationStatus status = event.getRequestModeration()
-                ? ParticipationStatus.PENDING
-                : ParticipationStatus.CONFIRMED;
+
+        int limit = event.getParticipantLimit();
+        int confirmed = participationStorage.countByEventAndStatus(eventId, ParticipationStatus.CONFIRMED);
+
+        if (limit > 0 && confirmed >= limit) {
+            throw new ConflictException("Достигнут лимит участников для события");
+        }
+
+        boolean autoConfirm = !event.getRequestModeration() || limit == 0;
 
         Participation participation = Participation.builder()
                 .created(LocalDateTime.now())
                 .event(event)
                 .requester(userStorage.getUserById(userId))
-                .status(status)
+                .status(autoConfirm ? ParticipationStatus.CONFIRMED : ParticipationStatus.PENDING)
                 .build();
 
-
         Participation saved = participationStorage.addParticipation(participation);
-
-
         return ParticipationMapper.toDto(saved);
-
-
     }
+
 
     private void isRepeatedRequest(Long userId, Long eventId) {
         if (participationStorage.isExistsByUserIdAndEventId(userId, eventId)) {
