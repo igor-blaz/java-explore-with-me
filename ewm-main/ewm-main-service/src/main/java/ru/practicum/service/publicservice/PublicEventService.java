@@ -11,6 +11,7 @@ import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.State;
 import ru.practicum.exceptions.ConflictException;
+import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.StringIlikeSqlPattern;
 import ru.practicum.model.Event;
@@ -28,10 +29,8 @@ public class PublicEventService {
 
 
     public EventFullDto getEventByIdPublic(Long id) {
-        Event event = eventStorage.getEventById(id);
-        if (event.getState() != State.PUBLISHED) {
-            throw new ConflictException("Событие должно быть опубликовано");
-        }
+        Event event = eventStorage.getPublicEventById(id);
+
         return EventMapper.toEventDto(event);
     }
 

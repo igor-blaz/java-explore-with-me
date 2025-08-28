@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.EndpointHitDto;
 import ru.practicum.StatsClient;
+import ru.practicum.ViewStatsDto;
 import ru.practicum.dto.event.AdminStateAction;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.State;
@@ -21,7 +22,9 @@ import ru.practicum.storage.CategoryStorage;
 import ru.practicum.storage.EventStorage;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -78,7 +81,7 @@ public class AdminEventService {
         if (dto.getAdminStateAction() != null) {
             switch (dto.getAdminStateAction()) {
                 case PUBLISH_EVENT -> event.setState(State.PUBLISHED);
-                case REJECT_EVENT -> event.setState(State.CANCELED);
+                case REJECT_EVENT -> event.setState(State.CANCELLED);
             }
         }
         if (dto.getTitle() != null) {
@@ -91,8 +94,8 @@ public class AdminEventService {
             List<Long> users,
             List<String> states,
             List<Long> categories,
-            String rangeStart,
-            String rangeEnd,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
             int from,
             int size,
             HttpServletRequest request
@@ -105,20 +108,45 @@ public class AdminEventService {
                 LocalDateTime.now()
         );
         statsClient.saveHit(hitDto);
-        boolean usersEmpty = users == null || users.isEmpty();
+
+        boolean usersEmpty = users == null || users.isEmpty() || users.get(0) == 0;
         boolean statesEmpty = states == null || states.isEmpty();
-        boolean catsEmpty = categories == null || categories.isEmpty();
+        boolean catsEmpty = categories == null || categories.isEmpty() || categories.get(0) == 0;
 
-        LocalDateTime start = (rangeStart != null && !rangeStart.isBlank())
-                ? LocalDateTime.parse(rangeStart)
-                : null;
-
-        LocalDateTime end = (rangeEnd != null && !rangeEnd.isBlank())
-                ? LocalDateTime.parse(rangeEnd)
-                : null;
 
         List<Event> events = eventStorage.getAdminEvents(usersEmpty, statesEmpty, catsEmpty, users, states,
-                categories, start, end, from, size);
-        return EventMapper.eventFullDtoList(events);
+                categories, rangeStart, rangeEnd, from, size);
+
+        List<String> uris = events.stream()
+                .map(e -> "/events/" + e.getId())
+                .toList();
+
+        List<ViewStatsDto> stats = statsClient.getStats(
+                LocalDateTime.of(2000, 1, 1, 0, 0),
+                LocalDateTime.of(3000, 1, 1, 0, 0),
+                uris,
+                false
+        );
+        List<Event> eventsWithViews = makeViews(events, stats);
+        return EventMapper.eventFullDtoList(eventsWithViews);
+    }
+
+    private List<Event> makeViews(List<Event> events, List<ViewStatsDto> stats) {
+        Map<Long, Long> eventViews = new HashMap<>();
+        for (ViewStatsDto stat : stats) {
+            String uri = stat.getUri();
+            String[] uriElements = uri.split("/");
+            Long eventId = Long.parseLong(uriElements[uriElements.length - 1]);
+
+            eventViews.put(eventId, stat.getHits());
+
+        }
+        for (Event event : events) {
+            if (eventViews.containsKey(event.getId())) {
+                event.setViews(eventViews.get(event.getId()));
+            }
+        }
+        return events;
+
     }
 }

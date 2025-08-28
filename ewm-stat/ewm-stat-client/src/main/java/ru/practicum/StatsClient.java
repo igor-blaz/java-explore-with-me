@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,7 +22,7 @@ public class StatsClient {
     private final String baseUrl;
 
     public StatsClient(RestTemplate rest,
-                       @Value("${stats.base-url}") String baseUrl) {
+                       @Value("${stats.url}") String baseUrl) {
         this.rest = rest;
         this.baseUrl = baseUrl;
     }
@@ -31,16 +33,27 @@ public class StatsClient {
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end,
                                        List<String> uris, boolean unique) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+        DateTimeFormatter F = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        UriComponentsBuilder b = UriComponentsBuilder
                 .fromHttpUrl(baseUrl + "/stats")
-                .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .queryParam("start", start.format(F))
+                .queryParam("end",   end.format(F))
                 .queryParam("unique", unique);
-        if (uris != null && !uris.isEmpty()) uris.forEach(u -> uriComponentsBuilder.queryParam("uris", u));
+
+        if (uris != null && !uris.isEmpty()) {
+            uris.forEach(u -> b.queryParam("uris", u));
+        }
+
+        // ВАЖНО: строим и кодируем!
+        //URI uri = b.build(true).toUri();
+        URI uri = b.encode(StandardCharsets.UTF_8).build().toUri();
+//TODO подумать
         ResponseEntity<List<ViewStatsDto>> resp = rest.exchange(
-                uriComponentsBuilder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-                });
+                uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {}
+        );
         return resp.getBody();
     }
+
 }
 

@@ -56,7 +56,7 @@ public class ParticipationStorage {
     }
 
     public List<Participation> saveAll(List<Participation> participations) {
-        return saveAll(participations);
+        return participationRepository.saveAll(participations);
     }
 
     public List<Participation> findParticipationsNotIn(Event event, ParticipationStatus status, List<Participation> participations) {

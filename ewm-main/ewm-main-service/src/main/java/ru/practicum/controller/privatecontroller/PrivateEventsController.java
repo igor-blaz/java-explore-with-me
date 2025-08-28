@@ -1,5 +1,6 @@
 package ru.practicum.controller.privatecontroller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class PrivateEventsController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto addNewEvent(
             @PathVariable Long userId,
-            @RequestBody NewEventDto newEventDto
+            @Valid @RequestBody NewEventDto newEventDto
     ) {
         return eventServiceImpl.addNewEventDto(userId, newEventDto);
     }
@@ -51,7 +52,7 @@ public class PrivateEventsController {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
-            @RequestBody UpdateEventUserRequest updateEventUserRequest,
+            @Valid @RequestBody UpdateEventUserRequest updateEventUserRequest,
             @PathVariable Long userId,
             @PathVariable Long eventId
     ) {
@@ -69,7 +70,7 @@ public class PrivateEventsController {
 
     @PatchMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult updateEventCompilationRequest(
-            @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest,
+            @Valid @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest,
             @PathVariable Long userId,
             @PathVariable Long eventId
     ) {

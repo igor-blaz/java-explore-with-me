@@ -24,6 +24,13 @@ import java.util.List;
 public class EventStorage {
     private final EventRepository eventRepository;
 
+    public Event getPublicEventById(Long id) {
+        return eventRepository.findPublishedById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено"));
+    }
+    public Event save(Event event){
+        return eventRepository.save(event);
+    }
 
     public List<Event> getEventsPublicByCategories(
             String text,
@@ -69,7 +76,7 @@ public class EventStorage {
                                       LocalDateTime rangeEnd,
                                       int from,
                                       int size) {
-        return eventRepository.findAdminEventsNative(usersEmpty, statesEmpty, categoriesEmpty, users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventRepository.findAdminEventsNative(usersEmpty, users, statesEmpty, states, categoriesEmpty, categories, rangeStart, rangeEnd, from, size);
 
     }
 
@@ -87,7 +94,8 @@ public class EventStorage {
     }
 
     public Event getUserEventsByEventId(Long eventId, Long userId) {
-        return eventRepository.findEventByIdAndInitiatorId(eventId, userId);
+        return eventRepository.findPublishedByIdAndInitiatorId(eventId, userId).
+                orElseThrow(() -> new NotFoundException("объект не найден"));
     }
 
     @Transactional
@@ -118,7 +126,7 @@ public class EventStorage {
         }
         if (dto.getStateAction() != null) {
             switch (dto.getStateAction()) {
-                case CANCEL_REVIEW -> event.setState(State.CANCELED);
+                case CANCEL_REVIEW -> event.setState(State.CANCELLED);
                 case SEND_TO_REVIEW -> event.setState(State.PENDING);
             }
 

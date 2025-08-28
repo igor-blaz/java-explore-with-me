@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatsClient;
 import ru.practicum.dto.event.*;
-import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateResult;
 import ru.practicum.dto.participation.ParticipationRequestDto;
@@ -49,12 +48,15 @@ public class PrivateEventService {
     public EventFullDto addNewEventDto(Long userId, NewEventDto newEventDto
     ) {
         eventTimeCheck(newEventDto.getEventDate());
-        Location location = LocationMapper.toEntity(newEventDto.getLocationDto());
+        Location location = LocationMapper.toEntity(newEventDto.getLocation());
         locationStorage.saveLocation(location);
         Category category = categoryStorage.getCategoryById(newEventDto.getCategory());
         User user = userStorage.getUserById(userId);
 
         Event event = eventStorage.addNewEvent(newEventDto, user, category, location);
+        if (event.getState() == State.PUBLISHED) {
+            event.setPublishedOn(LocalDateTime.now());
+        }
         return EventMapper.toEventDto(event);
     }
 
@@ -72,38 +74,55 @@ public class PrivateEventService {
     }
 
     @Transactional
-    public EventFullDto updateEventUserRequest(
-            UpdateEventUserRequest updateEventUserRequest, Long oldEventId, Long userId) {
-        Category category;
-        if (updateEventUserRequest.getEventDate() != null) {
-            eventTimeCheck(updateEventUserRequest.getEventDate());
-        }
-        if (updateEventUserRequest.getCategory() != null) {
-            category = categoryStorage.getCategoryById(updateEventUserRequest.getCategory());
-        } else {
-            category = null;
-        }
-        Location location;
-        if (updateEventUserRequest.getLocation() != null) {
-            LocationDto locationDto = updateEventUserRequest.getLocation();
+    public EventFullDto updateEventUserRequest(UpdateEventUserRequest dto, Long eventId, Long userId) {
+        Event old = eventStorage.getUserEventsByEventId(eventId, userId);
 
-            location = locationStorage.saveLocation(LocationMapper.toEntity(locationDto));
-        } else {
-            location = null;
+        // 1) Всегда проверяем статус редактируемости
+        pendingOrCancelledCheck(old.getState());
+
+        // 2) Бизнес-правила по времени (часто требуется "не раньше чем через 2 часа")
+        if (dto.getEventDate() != null) {
+            eventTimeCheck(dto.getEventDate());
+        }
+//TODO пофиксить
+        // 3) Частичные обновления
+        if (dto.getAnnotation() != null) old.setAnnotation(dto.getAnnotation());
+        if (dto.getDescription() != null) old.setDescription(dto.getDescription());
+        if (dto.getEventDate() != null) old.setEventDate(dto.getEventDate());
+        if (dto.getPaid() != null) old.setPaid(dto.getPaid());
+        if (dto.getParticipantLimit() != null) old.setParticipantLimit(dto.getParticipantLimit());
+        if (dto.getRequestModeration() != null) old.setRequestModeration(dto.getRequestModeration());
+        if (dto.getTitle() != null) old.setTitle(dto.getTitle());
+
+        if (dto.getCategory() != null) {
+            Category cat = categoryStorage.getCategoryById(dto.getCategory());
+            old.setCategory(cat);
         }
 
-        Event oldEvent = eventStorage.getUserEventsByEventId(oldEventId, userId);
-        pendingOrCancelledCheck(oldEvent.getState());
-        Event event = eventStorage.updateEvent(updateEventUserRequest, oldEvent, category, location);
-        return EventMapper.toEventDto(event);
+        if (dto.getLocation() != null) {
+            Location saved = locationStorage.saveLocation(LocationMapper.toEntity(dto.getLocation()));
+            old.setLocation(saved);
+        }
+
+        // 4) Обработка команд состояния
+        if (dto.getStateAction() != null) {
+            switch (dto.getStateAction()) {
+                case SEND_TO_REVIEW -> old.setState(State.PENDING);
+                case CANCEL_REVIEW -> old.setState(State.CANCELLED);
+            }
+        }
+
+        return EventMapper.toEventDto(old);
     }
 
     private void pendingOrCancelledCheck(State state) {
-        if (state != State.PENDING && state != State.CANCELED) {
-            throw new ConflictException("изменить можно только отмененные события или" +
-                    " события в состоянии ожидания модерации ");
+        if (state == null || (state != State.PENDING && state != State.CANCELLED)) {
+            throw new ConflictException(
+                    "изменить можно только отмененные события или события в состоянии ожидания модерации"
+            );
         }
     }
+
 
     @Transactional
     public EventRequestStatusUpdateResult updateRequestStatus(
@@ -131,9 +150,9 @@ public class PrivateEventService {
         List<Participation> pendindParticipations = participationStorage.findParticipationsNotIn(event,
                 PENDING, participations);
         if (eventRequestStatusUpdateRequest.getStatus() == ParticipationStatusForUpdate.REJECTED) {
-            return makeAllRejectedResponse(participations);
+            return makeAllRejectedResponse(participations, event);
         } else if (eventRequestStatusUpdateRequest.getStatus() == ParticipationStatusForUpdate.CONFIRMED) {
-            return makeConfirmedOrRejected(participations, freeSpaces, pendindParticipations);
+            return makeConfirmedOrRejected(participations, freeSpaces, pendindParticipations, event);
         } else {
             throw new ConflictException("Невозможно поменять статус заявки на " + eventRequestStatusUpdateRequest.getStatus());
         }
@@ -142,7 +161,8 @@ public class PrivateEventService {
     }
 
     private EventRequestStatusUpdateResult makeConfirmedOrRejected(List<Participation> participations, int free,
-                                                                   List<Participation> pendingParticipations) {
+                                                                   List<Participation> pendingParticipations,
+                                                                   Event event) {
         List<Participation> rejectedParticipation = new ArrayList<>();
         List<Participation> confirmedParticipation = new ArrayList<>();
         for (Participation participation : participations) {
@@ -150,6 +170,7 @@ public class PrivateEventService {
                 participation.setStatus(CONFIRMED);
                 confirmedParticipation.add(participation);
                 free--;
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             } else {
                 participation.setStatus(REJECTED);
                 rejectedParticipation.add(participation);
@@ -160,6 +181,7 @@ public class PrivateEventService {
             rejectedParticipation.addAll(pendingParticipations);
             participationStorage.saveAll(pendingParticipations);
         }
+        eventStorage.save(event);
         participationStorage.saveAll(participations);
 
         return EventRequestStatusUpdateResult.builder()
@@ -169,8 +191,10 @@ public class PrivateEventService {
     }
 
 
-    private EventRequestStatusUpdateResult makeAllRejectedResponse(List<Participation> participations) {
+    private EventRequestStatusUpdateResult makeAllRejectedResponse(List<Participation> participations, Event event) {
         participations.forEach(p -> p.setStatus(REJECTED));
+        event.setConfirmedRequests(0);
+        eventStorage.save(event);
         return EventRequestStatusUpdateResult.builder()
                 .rejectedRequests(ParticipationMapper.toDtoList(participations))
                 .confirmedRequests(Collections.emptyList())

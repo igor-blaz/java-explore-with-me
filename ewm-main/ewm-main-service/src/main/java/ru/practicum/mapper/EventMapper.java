@@ -60,6 +60,7 @@ public class EventMapper {
                 .participantLimit(newEventDto.getParticipantLimit())
                 .requestModeration(newEventDto.getRequestModeration())
                 .state(State.PUBLISHED)
+                .publishedOn(LocalDateTime.now())
                 .build();
     }
 
