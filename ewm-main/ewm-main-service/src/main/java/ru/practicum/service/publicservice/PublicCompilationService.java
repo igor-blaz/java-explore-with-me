@@ -1,4 +1,4 @@
-package ru.practicum.service;
+package ru.practicum.service.publicservice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CompilationServiceImpl {
-
-    private final CompilationStorage compilationStorage;
+public class PublicCompilationService {
+    CompilationStorage compilationStorage;
 
     public List<CompilationDto> getCompilations(
             Boolean pinned, Integer from, Integer size
@@ -27,18 +26,5 @@ public class CompilationServiceImpl {
     public CompilationDto getCompilationById(Long id) {
         Compilation compilation = compilationStorage.getCompilationById(id);
         return CompilationMapper.toDto(compilation);
-    }
-
-    public CompilationDto addCompilation(CompilationDto compilationDto) {
-        return null;
-    }
-
-    public CompilationDto updateCompilation(CompilationDto compilationDto,
-                                            Long compId) {
-        return null;
-    }
-
-    public void deleteCompilation(Long compId) {
-
     }
 }

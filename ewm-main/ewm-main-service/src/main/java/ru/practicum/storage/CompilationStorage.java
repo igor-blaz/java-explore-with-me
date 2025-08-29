@@ -29,12 +29,12 @@ public class CompilationStorage {
         return null;
     }
 
-    public void deleteCompilation() {
-
+    public void deleteCompilation(Long compId) {
+        compilationRepository.deleteById(compId);
     }
 
-    public Compilation addCompilation() {
-        return null;
+    public Compilation addCompilation(Compilation compilation) {
+        return compilationRepository.save(compilation);
     }
 
 

@@ -7,6 +7,8 @@ import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.User;
 import ru.practicum.repository.UserRepository;
 
+import java.util.List;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -16,5 +18,17 @@ public class UserStorage {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id: " + id + " не найден"));
+    }
+
+    public List<User> getUsers(List<Long> ids, int from, int size) {
+        return userRepository.getUsersNative(ids, from, size);
+    }
+
+    public User addUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
     }
 }

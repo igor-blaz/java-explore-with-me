@@ -22,6 +22,17 @@ public class ExceptionHandlerAdvice {
                 .build();
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequestException(BadRequestException e) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.name())
+                .reason("Bad request.")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
     @ExceptionHandler(NumberFormatException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNotFoundException(NumberFormatException e) {
@@ -34,10 +45,10 @@ public class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNotFoundException(ConstraintViolationException e) {
         return ErrorResponse.builder()
-                .status(HttpStatus.CONFLICT.name())
+                .status(HttpStatus.BAD_REQUEST.name())
                 .reason("Integrity constraint has been violated.")
                 .message(e.getMessage())
                 .timestamp(LocalDateTime.now())

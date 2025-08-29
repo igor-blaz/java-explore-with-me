@@ -1,4 +1,4 @@
-package ru.practicum.service;
+package ru.practicum.service.adminservice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,23 +11,12 @@ import ru.practicum.model.Category;
 import ru.practicum.storage.CategoryStorage;
 import ru.practicum.storage.EventStorage;
 
-import java.util.List;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CategoryServiceImpl {
+public class AdminCategoryService {
     private final CategoryStorage categoryStorage;
     private final EventStorage eventStorage;
-
-    public CategoryDto getCategoryById(Long id) {
-        return CategoryMapper.toCategoryDto(categoryStorage.getCategoryById(id));
-    }
-
-    public List<CategoryDto> getAllCategories(int from, int size) {
-        List<Category> categories = categoryStorage.getAllCategories(from, size);
-        return CategoryMapper.toCategoryDtoList(categories);
-    }
 
     public CategoryDto addCategory(NewCategoryDto categoryDto) {
         Category category = categoryStorage.addNewCategory(categoryDto);
@@ -49,5 +38,4 @@ public class CategoryServiceImpl {
         Category afterUpdate = categoryStorage.updateCategory(categoryForUpdate, oldCategory);
         return CategoryMapper.toCategoryDto(afterUpdate);
     }
-
 }
