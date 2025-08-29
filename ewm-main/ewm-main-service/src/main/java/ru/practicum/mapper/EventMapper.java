@@ -59,7 +59,7 @@ public class EventMapper {
                 .views(0L)
                 .participantLimit(newEventDto.getParticipantLimit())
                 .requestModeration(newEventDto.getRequestModeration())
-                .state(State.PUBLISHED)
+                .state(State.PENDING)
                 .publishedOn(LocalDateTime.now())
                 .build();
     }

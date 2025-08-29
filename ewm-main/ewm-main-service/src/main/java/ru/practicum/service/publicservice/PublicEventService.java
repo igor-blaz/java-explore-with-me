@@ -4,18 +4,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.EndpointHitDto;
-import ru.practicum.StatsClient;
 import ru.practicum.controller.publiccontroller.SortType;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.dto.event.State;
-import ru.practicum.exceptions.ConflictException;
-import ru.practicum.exceptions.NotFoundException;
+import ru.practicum.dto.participation.ParticipationStatus;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.StringIlikeSqlPattern;
 import ru.practicum.model.Event;
+import ru.practicum.service.StatsConnector;
 import ru.practicum.storage.EventStorage;
+import ru.practicum.storage.ParticipationStorage;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,13 +24,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicEventService {
     private final EventStorage eventStorage;
-    private final StatsClient statsClient;
+    private final StatsConnector statsConnector;
+    private final ParticipationStorage participationStorage;
 
 
     public EventFullDto getEventByIdPublic(Long id) {
         Event event = eventStorage.getPublicEventById(id);
-
-        return EventMapper.toEventDto(event);
+        int participationCount = participationStorage.countByEventAndStatus(event.getId(), ParticipationStatus.CONFIRMED);
+        event.setConfirmedRequests(participationCount);
+        return statsConnector.getViewsForEvent(event, true);
     }
 
     public List<EventShortDto> getEventsPublic(
@@ -46,21 +47,21 @@ public class PublicEventService {
             int size,
             HttpServletRequest request
     ) {
-        EndpointHitDto hitDto = new EndpointHitDto(
-                null,
-                "ewm-main-service",
-                request.getRequestURI(),
-                request.getRemoteAddr(),
-                LocalDateTime.now()
-        );
-        statsClient.saveHit(hitDto);
+
+
         String textPattern = StringIlikeSqlPattern.makeIlikePattern(text);
         boolean categoriesIsEmpty = categories == null || categories.isEmpty();
         List<Event> events;
         String sortType = null;
         LocalDateTime now = null;
+
+
         if (rangeStart == null && rangeEnd == null) {
             now = LocalDateTime.now();
+        } else if (rangeStart != null && rangeEnd != null) {
+            if (rangeStart.isAfter(rangeEnd)) {
+                throw new BadRequestException("начало события позже завершения. Ошибка");
+            }
         }
         if (sort != null) {
             sortType = sort.name();
@@ -69,14 +70,14 @@ public class PublicEventService {
 
         if (categoriesIsEmpty) {
             events = eventStorage.getEventsPublicWithoutCategories(textPattern,
-                    paid, rangeStart, rangeEnd, now, onlyAvailable, sortType,
+                    paid, rangeStart, rangeEnd, onlyAvailable, sortType,
                     from, size);
         } else {
             events = eventStorage.getEventsPublicByCategories(textPattern, categories,
-                    paid, rangeStart, rangeEnd, now, onlyAvailable, sortType,
+                    paid, rangeStart, rangeEnd, onlyAvailable, sortType,
                     from, size);
         }
-
+        statsConnector.makeHit(request);
         return EventMapper.eventShortDtoList(events);
     }
 }

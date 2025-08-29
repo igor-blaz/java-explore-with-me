@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.service.StatsConnector;
 import ru.practicum.service.publicservice.PublicEventService;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicEventsController {
 
+    private final StatsConnector statsConnector;
     private final PublicEventService eventServiceImpl;
 
     @GetMapping
@@ -43,8 +45,8 @@ public class PublicEventsController {
 
 
     @GetMapping("/{id}")
-    public EventFullDto getEventById(@PathVariable Long id) {
-
+    public EventFullDto getEventById(@PathVariable Long id, HttpServletRequest request) {
+        statsConnector.makeHit(request);
         return eventServiceImpl.getEventByIdPublic(id);
     }
 

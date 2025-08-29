@@ -28,7 +28,8 @@ public class EventStorage {
         return eventRepository.findPublishedById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдено"));
     }
-    public Event save(Event event){
+
+    public Event save(Event event) {
         return eventRepository.save(event);
     }
 
@@ -38,13 +39,12 @@ public class EventStorage {
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
-            LocalDateTime now,
             boolean onlyAvailable,
             String sort,
             int from,
             int size
     ) {
-        return eventRepository.getEventsPublicByCategories(text, categories, paid, rangeStart, rangeEnd, now, onlyAvailable, sort, from, size);
+        return eventRepository.getEventsPublicByCategories(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
     public List<Event> getEventsPublicWithoutCategories(
@@ -52,13 +52,12 @@ public class EventStorage {
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
-            LocalDateTime now,
             boolean onlyAvailable,
             String sort,
             int from,
             int size
     ) {
-        return eventRepository.getEventsPublicWithoutCategories(text, paid, rangeStart, rangeEnd, now, onlyAvailable, sort, from, size);
+        return eventRepository.getEventsPublicWithoutCategories(text, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
     public List<Event> getEventsByIds(List<Long> ids) {
@@ -93,9 +92,14 @@ public class EventStorage {
         return eventRepository.save(EventMapper.toEntity(newEventDto, user, category, location));
     }
 
-    public Event getUserEventsByEventId(Long eventId, Long userId) {
+    public Event getEventPublishedByUserId(Long eventId, Long userId) {
         return eventRepository.findPublishedByIdAndInitiatorId(eventId, userId).
                 orElseThrow(() -> new NotFoundException("объект не найден"));
+    }
+
+    public Event getEventByUserId(Long eventId, Long userId) {
+        return eventRepository.findByIdAndInitiator_Id(eventId, userId)
+                .orElseThrow(() -> new NotFoundException(""));
     }
 
     @Transactional

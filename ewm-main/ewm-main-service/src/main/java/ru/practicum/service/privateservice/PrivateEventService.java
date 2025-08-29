@@ -4,17 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.StatsClient;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateResult;
 import ru.practicum.dto.participation.ParticipationRequestDto;
 import ru.practicum.dto.participation.ParticipationStatusForUpdate;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.LocationMapper;
 import ru.practicum.mapper.ParticipationMapper;
 import ru.practicum.model.*;
+import ru.practicum.service.StatsConnector;
 import ru.practicum.storage.*;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class PrivateEventService {
     private final CategoryStorage categoryStorage;
     private final UserStorage userStorage;
     private final ParticipationStorage participationStorage;
-    private final StatsClient statsClient;
+    private final StatsConnector statsConnector;
 
     public List<EventShortDto> getUserEvents(Long userId, Integer from, Integer size) {
         List<Event> events = eventStorage.getUserEvents(userId, from, size);
@@ -57,25 +58,26 @@ public class PrivateEventService {
         if (event.getState() == State.PUBLISHED) {
             event.setPublishedOn(LocalDateTime.now());
         }
-        return EventMapper.toEventDto(event);
+        return statsConnector.getViewsForEvent(event, true);
     }
 
     private void eventTimeCheck(LocalDateTime eventTime) {
         LocalDateTime now = LocalDateTime.now();
         if (eventTime.isBefore(now.plusHours(2))) {
-            throw new ConflictException("Время события должно быть минимум через 2 часа от текущего момента");
+            throw new BadRequestException("Время события должно быть минимум через 2 часа от текущего момента");
         }
 
     }
 
     public EventFullDto getUserEventsByEventId(Long eventId, Long userId) {
-        Event event = eventStorage.getUserEventsByEventId(eventId, userId);
-        return EventMapper.toEventDto(event);
+        Event event = eventStorage.getEventPublishedByUserId(eventId, userId);
+        return statsConnector.getViewsForEvent(event, true);
     }
 
     @Transactional
     public EventFullDto updateEventUserRequest(UpdateEventUserRequest dto, Long eventId, Long userId) {
-        Event old = eventStorage.getUserEventsByEventId(eventId, userId);
+
+        Event old = eventStorage.getEventByUserId(eventId, userId);
 
         // 1) Всегда проверяем статус редактируемости
         pendingOrCancelledCheck(old.getState());
@@ -112,12 +114,12 @@ public class PrivateEventService {
             }
         }
 
-        return EventMapper.toEventDto(old);
+        return statsConnector.getViewsForEvent(old, true);
     }
 
     private void pendingOrCancelledCheck(State state) {
         if (state == null || (state != State.PENDING && state != State.CANCELLED)) {
-            throw new ConflictException(
+            throw new BadRequestException(
                     "изменить можно только отмененные события или события в состоянии ожидания модерации"
             );
         }
@@ -128,7 +130,7 @@ public class PrivateEventService {
     public EventRequestStatusUpdateResult updateRequestStatus(
             EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest, Long userId, Long eventId
     ) {
-        Event event = eventStorage.getUserEventsByEventId(userId, eventId);
+        Event event = eventStorage.getEventPublishedByUserId(userId, eventId);
         isRequestModerationValidation(event);
 
 

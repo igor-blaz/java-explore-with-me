@@ -15,9 +15,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateEventAdminRequest {
+    @Size(min = 20, max = 2000, message = "Аннотация должна быть от 20 до 2000 символов")
     private String annotation;
     private Long category;
-    @Size(min = 20, max = 7000, message = "Описание должно быть от 1 до 50 символов")
+    @Size(min = 20, max = 7000, message = "Описание должно быть от 20 до 7000 символов")
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
@@ -26,7 +27,7 @@ public class UpdateEventAdminRequest {
     private Integer participantLimit;
     private Boolean requestModeration;
     private AdminStateAction adminStateAction;
-    @Size(min = 3, max = 120, message = "Название должно быть от 1 до 50 символов")
+    @Size(min = 3, max = 120, message = "Название должно быть от 3 до 120 символов")
     private String title;
 
 }

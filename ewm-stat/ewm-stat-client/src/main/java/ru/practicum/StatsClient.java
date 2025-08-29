@@ -38,19 +38,17 @@ public class StatsClient {
         UriComponentsBuilder b = UriComponentsBuilder
                 .fromHttpUrl(baseUrl + "/stats")
                 .queryParam("start", start.format(F))
-                .queryParam("end",   end.format(F))
+                .queryParam("end", end.format(F))
                 .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {
             uris.forEach(u -> b.queryParam("uris", u));
         }
 
-        // ВАЖНО: строим и кодируем!
-        //URI uri = b.build(true).toUri();
         URI uri = b.encode(StandardCharsets.UTF_8).build().toUri();
-//TODO подумать
         ResponseEntity<List<ViewStatsDto>> resp = rest.exchange(
-                uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {}
+                uri, HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                }
         );
         return resp.getBody();
     }

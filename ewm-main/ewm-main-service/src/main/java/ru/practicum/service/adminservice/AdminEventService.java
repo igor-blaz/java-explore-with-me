@@ -5,26 +5,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.EndpointHitDto;
-import ru.practicum.StatsClient;
-import ru.practicum.ViewStatsDto;
 import ru.practicum.dto.event.AdminStateAction;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
-import ru.practicum.exceptions.ConflictException;
-import ru.practicum.mapper.EventMapper;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.mapper.LocationMapper;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.Location;
+import ru.practicum.service.StatsConnector;
 import ru.practicum.storage.CategoryStorage;
 import ru.practicum.storage.EventStorage;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -32,7 +27,7 @@ import java.util.Map;
 public class AdminEventService {
     private final EventStorage eventStorage;
     private final CategoryStorage categoryStorage;
-    private final StatsClient statsClient;
+    private final StatsConnector statsConnector;
 
 
     @Transactional
@@ -42,14 +37,14 @@ public class AdminEventService {
         if (dto.getEventDate() != null) {
             LocalDateTime now = LocalDateTime.now();
             if (dto.getEventDate().isBefore(now.plusHours(1))) {
-                throw new ConflictException("Дата начала события должна быть минимум за час до публикации");
+                throw new BadRequestException("Дата начала события должна быть минимум за час до публикации");
             }
         }
         if (dto.getAdminStateAction() == AdminStateAction.PUBLISH_EVENT && event.getState() != State.PENDING) {
-            throw new ConflictException("Опубликовать можно только событие в состоянии ожидания публикации");
+            throw new BadRequestException("Опубликовать можно только событие в состоянии ожидания публикации");
         }
         if (dto.getAdminStateAction() == AdminStateAction.REJECT_EVENT && event.getState() == State.PUBLISHED) {
-            throw new ConflictException("Нельзя отклонить уже опубликованное событие");
+            throw new BadRequestException("Нельзя отклонить уже опубликованное событие");
         }
 
         if (dto.getAnnotation() != null) {
@@ -87,7 +82,8 @@ public class AdminEventService {
         if (dto.getTitle() != null) {
             event.setTitle(dto.getTitle());
         }
-        return EventMapper.toEventDto(event);
+
+        return statsConnector.getViewsForEvent(event, false);
     }
 
     public List<EventFullDto> adminGetEvents(
@@ -100,14 +96,7 @@ public class AdminEventService {
             int size,
             HttpServletRequest request
     ) {
-        EndpointHitDto hitDto = new EndpointHitDto(
-                null,
-                "ewm-main-service",
-                request.getRequestURI(),
-                request.getRemoteAddr(),
-                LocalDateTime.now()
-        );
-        statsClient.saveHit(hitDto);
+        statsConnector.makeHit(request);
 
         boolean usersEmpty = users == null || users.isEmpty() || users.get(0) == 0;
         boolean statesEmpty = states == null || states.isEmpty();
@@ -117,36 +106,8 @@ public class AdminEventService {
         List<Event> events = eventStorage.getAdminEvents(usersEmpty, statesEmpty, catsEmpty, users, states,
                 categories, rangeStart, rangeEnd, from, size);
 
-        List<String> uris = events.stream()
-                .map(e -> "/events/" + e.getId())
-                .toList();
-
-        List<ViewStatsDto> stats = statsClient.getStats(
-                LocalDateTime.of(2000, 1, 1, 0, 0),
-                LocalDateTime.of(3000, 1, 1, 0, 0),
-                uris,
-                false
-        );
-        List<Event> eventsWithViews = makeViews(events, stats);
-        return EventMapper.eventFullDtoList(eventsWithViews);
+        return statsConnector.getViewsForEvents(events, false);
     }
 
-    private List<Event> makeViews(List<Event> events, List<ViewStatsDto> stats) {
-        Map<Long, Long> eventViews = new HashMap<>();
-        for (ViewStatsDto stat : stats) {
-            String uri = stat.getUri();
-            String[] uriElements = uri.split("/");
-            Long eventId = Long.parseLong(uriElements[uriElements.length - 1]);
 
-            eventViews.put(eventId, stat.getHits());
-
-        }
-        for (Event event : events) {
-            if (eventViews.containsKey(event.getId())) {
-                event.setViews(eventViews.get(event.getId()));
-            }
-        }
-        return events;
-
-    }
 }
