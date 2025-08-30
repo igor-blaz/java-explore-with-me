@@ -39,6 +39,7 @@ public class PrivateEventsController {
             @PathVariable Long userId,
             @Valid @RequestBody NewEventDto newEventDto
     ) {
+        log.info("Event {}", newEventDto);
         return eventServiceImpl.addNewEventDto(userId, newEventDto);
     }
 

@@ -44,7 +44,8 @@ public class EventStorage {
             int from,
             int size
     ) {
-        return eventRepository.getEventsPublicByCategories(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        return eventRepository.getEventsPublicByCategories(text, categories, paid, rangeStart, rangeEnd,
+                onlyAvailable, sort, from, size);
     }
 
     public List<Event> getEventsPublicWithoutCategories(
@@ -75,7 +76,8 @@ public class EventStorage {
                                       LocalDateTime rangeEnd,
                                       int from,
                                       int size) {
-        return eventRepository.findAdminEventsNative(usersEmpty, users, statesEmpty, states, categoriesEmpty, categories, rangeStart, rangeEnd, from, size);
+        return eventRepository.findAdminEventsNative(usersEmpty, users, statesEmpty, states, categoriesEmpty,
+                categories, rangeStart, rangeEnd, from, size);
 
     }
 

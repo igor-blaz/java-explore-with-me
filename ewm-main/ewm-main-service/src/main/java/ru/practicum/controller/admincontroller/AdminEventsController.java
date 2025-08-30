@@ -26,6 +26,9 @@ public class AdminEventsController {
     public EventFullDto updateEvent(
             @Valid @RequestBody UpdateEventAdminRequest updateEventAdminRequest,
             @PathVariable Long eventId) {
+        log.debug("Смена статуса у Event {}", eventId);
+        log.info("PATCH /admin/events/{} body = {}", eventId, updateEventAdminRequest);
+
         return eventServiceImpl.adminUpdateEvent(updateEventAdminRequest, eventId);
     }
 

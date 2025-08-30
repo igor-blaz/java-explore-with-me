@@ -46,8 +46,9 @@ public class PrivateEventService {
         return ParticipationMapper.toDtoList(participations);
     }
 
-    public EventFullDto addNewEventDto(Long userId, NewEventDto newEventDto
+    public EventFullDto addNewEventDto(Long userId, NewEventDto dto
     ) {
+        NewEventDto newEventDto = makeDefaultIfNull(dto);
         eventTimeCheck(newEventDto.getEventDate());
         Location location = LocationMapper.toEntity(newEventDto.getLocation());
         locationStorage.saveLocation(location);
@@ -59,6 +60,19 @@ public class PrivateEventService {
             event.setPublishedOn(LocalDateTime.now());
         }
         return statsConnector.getViewsForEvent(event, true);
+    }
+
+    private NewEventDto makeDefaultIfNull(NewEventDto newEventDto) {
+        if (newEventDto.getPaid() == null) {
+            newEventDto.setPaid(false);
+        }
+        if (newEventDto.getRequestModeration() == null) {
+            newEventDto.setRequestModeration(true);
+        }
+        if (newEventDto.getParticipantLimit() == null) {
+            newEventDto.setParticipantLimit(0);
+        }
+        return newEventDto;
     }
 
     private void eventTimeCheck(LocalDateTime eventTime) {
@@ -79,15 +93,11 @@ public class PrivateEventService {
 
         Event old = eventStorage.getEventByUserId(eventId, userId);
 
-        // 1) Всегда проверяем статус редактируемости
         pendingOrCancelledCheck(old.getState());
 
-        // 2) Бизнес-правила по времени (часто требуется "не раньше чем через 2 часа")
         if (dto.getEventDate() != null) {
             eventTimeCheck(dto.getEventDate());
         }
-//TODO пофиксить
-        // 3) Частичные обновления
         if (dto.getAnnotation() != null) old.setAnnotation(dto.getAnnotation());
         if (dto.getDescription() != null) old.setDescription(dto.getDescription());
         if (dto.getEventDate() != null) old.setEventDate(dto.getEventDate());
@@ -106,7 +116,6 @@ public class PrivateEventService {
             old.setLocation(saved);
         }
 
-        // 4) Обработка команд состояния
         if (dto.getStateAction() != null) {
             switch (dto.getStateAction()) {
                 case SEND_TO_REVIEW -> old.setState(State.PENDING);

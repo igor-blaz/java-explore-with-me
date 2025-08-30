@@ -53,20 +53,20 @@ public class PublicEventService {
         boolean categoriesIsEmpty = categories == null || categories.isEmpty();
         List<Event> events;
         String sortType = null;
-        LocalDateTime now = null;
-
+        LocalDateTime now = LocalDateTime.now();
 
         if (rangeStart == null && rangeEnd == null) {
-            now = LocalDateTime.now();
+            rangeStart = now;
         } else if (rangeStart != null && rangeEnd != null) {
             if (rangeStart.isAfter(rangeEnd)) {
                 throw new BadRequestException("начало события позже завершения. Ошибка");
             }
         }
+
+
         if (sort != null) {
             sortType = sort.name();
         }
-
 
         if (categoriesIsEmpty) {
             events = eventStorage.getEventsPublicWithoutCategories(textPattern,

@@ -29,6 +29,7 @@ public class PrivateRequestsController {
             @PathVariable Long userId,
             @RequestParam Long eventId
     ) {
+        log.debug("Добавление запроса пользователя у Event {}", eventId);
         return participationService.addUserRequest(userId, eventId);
     }
 

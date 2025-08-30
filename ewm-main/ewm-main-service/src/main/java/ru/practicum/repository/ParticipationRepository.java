@@ -21,6 +21,9 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
             """)
     List<Participation> findAllForUpdate(@Param("eventId") Long eventId, @Param("ids") List<Long> ids);
 
+
+
+
     long countByEventId(Long eventId);
 
     List<Participation> findAllByRequesterId(Long userId);
