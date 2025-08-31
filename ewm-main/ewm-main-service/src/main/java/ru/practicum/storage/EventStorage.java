@@ -99,6 +99,7 @@ public class EventStorage {
                 orElseThrow(() -> new NotFoundException("объект не найден"));
     }
 
+
     public Event getEventByUserId(Long eventId, Long userId) {
         return eventRepository.findByIdAndInitiator_Id(eventId, userId)
                 .orElseThrow(() -> new NotFoundException(""));
@@ -132,7 +133,7 @@ public class EventStorage {
         }
         if (dto.getStateAction() != null) {
             switch (dto.getStateAction()) {
-                case CANCEL_REVIEW -> event.setState(State.CANCELLED);
+                case CANCEL_REVIEW -> event.setState(State.CANCELED);
                 case SEND_TO_REVIEW -> event.setState(State.PENDING);
             }
 

@@ -22,6 +22,11 @@ public class ParticipationStorage {
                 .orElseThrow(() -> new NotFoundException("Request with id= " + requestId + " was not found"));
     }
 
+    public boolean existsByIdAndAndStatus(Long eventId, List<Long> ids, ParticipationStatus status) {
+        return participationRepository.existsByEventIdAndIdInAndStatus(eventId, ids, status);
+
+    }
+
     public Participation addParticipation(Participation participation) {
         return participationRepository.save(participation);
     }
@@ -44,7 +49,7 @@ public class ParticipationStorage {
     }
 
     public List<Participation> getParticipationByUserIdAndEventId(Long userId, Long eventId) {
-        return participationRepository.findAllByRequester_IdAndEvent_Id(userId, eventId);
+        return participationRepository.findAllByEvent_Initiator_IdAndEvent_Id(userId, eventId);
     }
 
     public List<Participation> getParticipationsForStatusUpdate(Long eventId, List<Long> participationIds) {

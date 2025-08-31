@@ -11,6 +11,7 @@ import ru.practicum.model.Event;
 import ru.practicum.storage.CompilationStorage;
 import ru.practicum.storage.EventStorage;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,8 +24,16 @@ public class AdminCompilationService {
 
 
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
-        List<Event> events = eventStorage.getEventsByIds(newCompilationDto.getEvents());
-        Compilation compilation = CompilationMapper.toEntity(newCompilationDto, events);
+        Compilation compilation;
+        if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
+            List<Event> events = eventStorage.getEventsByIds(newCompilationDto.getEvents());
+            compilation = CompilationMapper.toEntity(newCompilationDto, events);
+
+
+        } else {
+            compilation = CompilationMapper.toEntity(newCompilationDto, Collections.emptyList());
+        }
+
         Compilation savedCompilation = compilationStorage.addCompilation(compilation);
         return CompilationMapper.toDto(savedCompilation);
     }

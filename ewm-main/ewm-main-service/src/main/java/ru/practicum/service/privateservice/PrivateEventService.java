@@ -84,7 +84,7 @@ public class PrivateEventService {
     }
 
     public EventFullDto getUserEventsByEventId(Long eventId, Long userId) {
-        Event event = eventStorage.getEventPublishedByUserId(eventId, userId);
+        Event event = eventStorage.getEventByUserId(eventId, userId);
         return statsConnector.getViewsForEvent(event, true);
     }
 
@@ -119,7 +119,7 @@ public class PrivateEventService {
         if (dto.getStateAction() != null) {
             switch (dto.getStateAction()) {
                 case SEND_TO_REVIEW -> old.setState(State.PENDING);
-                case CANCEL_REVIEW -> old.setState(State.CANCELLED);
+                case CANCEL_REVIEW -> old.setState(State.CANCELED);
             }
         }
 
@@ -127,8 +127,8 @@ public class PrivateEventService {
     }
 
     private void pendingOrCancelledCheck(State state) {
-        if (state == null || (state != State.PENDING && state != State.CANCELLED)) {
-            throw new BadRequestException(
+        if (state == null || (state != State.PENDING && state != State.CANCELED)) {
+            throw new ConflictException(
                     "изменить можно только отмененные события или события в состоянии ожидания модерации"
             );
         }
@@ -139,7 +139,18 @@ public class PrivateEventService {
     public EventRequestStatusUpdateResult updateRequestStatus(
             EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest, Long userId, Long eventId
     ) {
-        Event event = eventStorage.getEventPublishedByUserId(userId, eventId);
+        log.info("Начало патча");
+        if (eventRequestStatusUpdateRequest.getStatus() == ParticipationStatusForUpdate.REJECTED) {
+            boolean hasConfirmed = participationStorage.existsByIdAndAndStatus(eventId,
+                    eventRequestStatusUpdateRequest.getRequestIds(), CONFIRMED);
+            log.debug("оказалось, что тут есть уже продтвержденные");
+            if (hasConfirmed) {
+
+                throw new ConflictException("Нельзя отклонить уже принятую заявку");
+            }
+        }
+
+        Event event = eventStorage.getEventPublishedByUserId(eventId, userId);
         isRequestModerationValidation(event);
 
 

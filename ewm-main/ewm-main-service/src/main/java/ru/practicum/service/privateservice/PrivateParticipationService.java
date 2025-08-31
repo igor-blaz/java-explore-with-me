@@ -36,6 +36,7 @@ public class PrivateParticipationService {
         if (participation.getStatus() == ParticipationStatus.REJECTED) {
             throw new ConflictException("Заявка уже отклонена");
         }
+
         if (participation.getStatus() == ParticipationStatus.CONFIRMED) {
             Event event = participation.getEvent();
             long confirmedRequests = event.getConfirmedRequests();

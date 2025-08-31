@@ -19,7 +19,7 @@ public class CompilationDto {
     private List<EventShortDto> events;
     @NotNull
     private Long id;
-    @NotNull
+
     private Boolean pinned;
     @NotBlank
     @Size(min = 1, max = 50, message = "Название должно быть от 1 до 50 символов")

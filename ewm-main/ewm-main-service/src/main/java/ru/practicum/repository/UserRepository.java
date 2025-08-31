@@ -9,13 +9,19 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = """
-            SELECT * FROM users
-            WHERE id IN (:ids)
-            LIMIT :size OFFSET :from
+            SELECT u.*
+            FROM users u
+            WHERE (:idsEmpty = true OR u.id IN (:ids))
+            ORDER BY u.id
+            LIMIT :size OFFSET :offset
             """, nativeQuery = true)
-    List<User> getUsersNative(
+    List<User> findUsersNative(
             @Param("ids") List<Long> ids,
-            @Param("from") int from,
-            @Param("size") int size);
+            @Param("offset") int offset,
+            @Param("size") int size,
+            @Param("idsEmpty") boolean idsEmpty
+    );
+
+   boolean existsByEmail(String email);
 
 }

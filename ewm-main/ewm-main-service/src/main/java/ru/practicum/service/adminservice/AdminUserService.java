@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.user.UserDto;
+import ru.practicum.exceptions.ConflictException;
 import ru.practicum.mapper.UserMapper;
 import ru.practicum.model.User;
 import ru.practicum.storage.UserStorage;
@@ -28,6 +29,9 @@ public class AdminUserService {
 
     public UserDto addUser(UserDto userDto) {
         User user = UserMapper.toModel(userDto);
+        if (userStorage.existsByEmail(userDto.getEmail())) {
+            throw new ConflictException("Этот Email уже занят");
+        }
         User savedUser = userStorage.addUser(user);
         return UserMapper.toUserDto(savedUser);
     }

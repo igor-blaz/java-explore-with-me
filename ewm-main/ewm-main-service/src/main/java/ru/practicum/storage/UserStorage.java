@@ -21,7 +21,9 @@ public class UserStorage {
     }
 
     public List<User> getUsers(List<Long> ids, int from, int size) {
-        return userRepository.getUsersNative(ids, from, size);
+        boolean idsEmpty = ids == null || ids.isEmpty();
+        log.info("ids{}  idsEmpty{}  from{}  size{}", ids, idsEmpty, from, size);
+        return userRepository.findUsersNative(ids, from, size, idsEmpty);
     }
 
     public User addUser(User user) {
@@ -30,5 +32,9 @@ public class UserStorage {
 
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public boolean existsByEmail(String email) {
+       return userRepository.existsByEmail(email);
     }
 }

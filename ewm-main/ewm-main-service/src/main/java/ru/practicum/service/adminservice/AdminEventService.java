@@ -74,7 +74,7 @@ public class AdminEventService {
                     if (event.getState() == State.PUBLISHED) {
                         throw new ConflictException("Нельзя отклонить уже опубликованное событие");
                     }
-                    event.setState(State.CANCELLED);
+                    event.setState(State.CANCELED);
                 }
 
             }

@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PublicCompilationService {
-    CompilationStorage compilationStorage;
+    private final CompilationStorage compilationStorage;
 
     public List<CompilationDto> getCompilations(
             Boolean pinned, Integer from, Integer size

@@ -3,6 +3,7 @@ package ru.practicum.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.dto.event.State;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 
@@ -136,6 +137,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("offset") int offset,
             @Param("size") int size
     );
+
 
 
     @Query(value = """

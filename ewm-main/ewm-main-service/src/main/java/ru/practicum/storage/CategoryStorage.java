@@ -23,6 +23,10 @@ public class CategoryStorage {
 
     }
 
+    public boolean isExistsByName(String name) {
+        return repository.existsByName(name);
+    }
+
     public Category addNewCategory(NewCategoryDto newCategoryDto) {
         return repository.save(CategoryMapper.toEntity(newCategoryDto));
     }

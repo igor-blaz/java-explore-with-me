@@ -19,6 +19,7 @@ public class AdminCategoryService {
     private final EventStorage eventStorage;
 
     public CategoryDto addCategory(NewCategoryDto categoryDto) {
+        existByNameCheck(categoryDto.getName());
         Category category = categoryStorage.addNewCategory(categoryDto);
         return CategoryMapper.toCategoryDto(category);
     }
@@ -31,8 +32,14 @@ public class AdminCategoryService {
         }
         categoryStorage.deleteCategory(category);
     }
+    private void existByNameCheck(String name){
+        if(categoryStorage.isExistsByName(name)){
+            throw new ConflictException("Имя категории уже занято");
+        }
+    }
 
     public CategoryDto updateCategory(CategoryDto categoryDto, Long id) {
+        existByNameCheck(categoryDto.getName());
         Category categoryForUpdate = CategoryMapper.toEntity(categoryDto);
         Category oldCategory = categoryStorage.getCategoryById(id);
         Category afterUpdate = categoryStorage.updateCategory(categoryForUpdate, oldCategory);
