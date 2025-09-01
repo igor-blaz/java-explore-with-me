@@ -3,8 +3,10 @@ package ru.practicum.service.adminservice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
+import ru.practicum.dto.compilation.UpdateCompilationRequest;
 import ru.practicum.mapper.CompilationMapper;
 import ru.practicum.model.Compilation;
 import ru.practicum.model.Event;
@@ -13,6 +15,7 @@ import ru.practicum.storage.EventStorage;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -38,25 +41,30 @@ public class AdminCompilationService {
         return CompilationMapper.toDto(savedCompilation);
     }
 
-    public CompilationDto updateCompilation(NewCompilationDto newCompilationDto,
-                                            Long compId) {
-        Compilation compilation = compilationStorage.getCompilationById(compId);
+    @Transactional
+    public CompilationDto updateCompilation(UpdateCompilationRequest dto, Long compId) {
+        Compilation comp = compilationStorage.getCompilationById(compId);
 
-        if (!compilation.getPinned().equals(newCompilationDto.getPinned())) {
-            compilation.setPinned(newCompilationDto.getPinned());
-        }
-        if (!compilation.getTitle().equals(newCompilationDto.getTitle())) {
-            compilation.setTitle(newCompilationDto.getTitle());
+        if (dto.getPinned() != null && !Objects.equals(comp.getPinned(), dto.getPinned())) {
+            comp.setPinned(dto.getPinned());
         }
 
-        if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
-            List<Event> events = eventStorage.getEventsByIds(newCompilationDto.getEvents());
-            compilation.setEvents(events);
+        if (dto.getTitle() != null) {
+            String t = dto.getTitle().trim();
+            comp.setTitle(t);
         }
 
-        Compilation saved = compilationStorage.addCompilation(compilation);
+        if (dto.getEvents() != null) {
+            List<Event> events = dto.getEvents().isEmpty()
+                    ? Collections.emptyList()
+                    : eventStorage.getEventsByIds(dto.getEvents());
+            comp.setEvents(events);
+        }
+
+        Compilation saved = compilationStorage.addCompilation(comp);
         return CompilationMapper.toDto(saved);
     }
+
 
     public void deleteCompilation(Long compId) {
         compilationStorage.getCompilationById(compId);

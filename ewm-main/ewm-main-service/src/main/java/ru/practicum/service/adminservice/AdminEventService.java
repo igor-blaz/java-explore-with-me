@@ -10,10 +10,10 @@ import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.ConflictException;
+import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.LocationMapper;
 import ru.practicum.model.Event;
 import ru.practicum.service.StatsConnector;
-import ru.practicum.service.privateservice.PrivateParticipationService;
 import ru.practicum.storage.CategoryStorage;
 import ru.practicum.storage.EventStorage;
 import ru.practicum.storage.ParticipationStorage;
@@ -30,7 +30,6 @@ public class AdminEventService {
     private final CategoryStorage categoryStorage;
     private final StatsConnector statsConnector;
     private final ParticipationStorage participationStorage;
-    private final PrivateParticipationService participationService;
 
 
     @Transactional
@@ -80,7 +79,7 @@ public class AdminEventService {
             }
         }
         eventStorage.save(event);
-        return statsConnector.getViewsForEvent(event, false);
+        return EventMapper.toEventDto(event);
     }
 
 
@@ -94,7 +93,6 @@ public class AdminEventService {
             int size,
             HttpServletRequest request
     ) {
-        //  statsConnector.makeHit(request);
 
         boolean usersEmpty = users == null || users.isEmpty() || users.get(0) == 0;
         boolean statesEmpty = states == null || states.isEmpty();

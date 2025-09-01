@@ -59,7 +59,7 @@ public class PrivateEventService {
         if (event.getState() == State.PUBLISHED) {
             event.setPublishedOn(LocalDateTime.now());
         }
-        return statsConnector.getViewsForEvent(event, true);
+        return EventMapper.toEventDto(event);
     }
 
     private NewEventDto makeDefaultIfNull(NewEventDto newEventDto) {

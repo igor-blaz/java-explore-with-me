@@ -35,6 +35,6 @@ public class UserStorage {
     }
 
     public boolean existsByEmail(String email) {
-       return userRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email);
     }
 }

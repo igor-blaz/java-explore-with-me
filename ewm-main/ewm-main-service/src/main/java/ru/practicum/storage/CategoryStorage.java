@@ -27,6 +27,10 @@ public class CategoryStorage {
         return repository.existsByName(name);
     }
 
+    public boolean isExistsByNameNotInId(String name, Long id) {
+        return repository.existsByNameAndIdNot(name, id);
+    }
+
     public Category addNewCategory(NewCategoryDto newCategoryDto) {
         return repository.save(CategoryMapper.toEntity(newCategoryDto));
     }

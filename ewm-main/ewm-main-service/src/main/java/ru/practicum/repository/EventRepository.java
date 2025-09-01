@@ -3,7 +3,6 @@ package ru.practicum.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.dto.event.State;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 
@@ -38,41 +37,40 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
 
     @Query(value = """
-    SELECT e.*
-    FROM events e
-    WHERE
-      (:textPattern IS NULL OR e.description ILIKE :textPattern
-         OR e.annotation ILIKE :textPattern
-         OR e.title      ILIKE :textPattern)
-      AND e.state = 'PUBLISHED'
-      AND e.published_on IS NOT NULL
-      AND e.category_id IN (:categories)
-      AND e.paid      = COALESCE(:paid, e.paid)
-      AND e.event_date >= :start
-      AND e.event_date <= COALESCE(:end, e.event_date)
-      AND (
-            NOT :onlyAvailable
-            OR e.participant_limit = 0
-            OR e.confirmed_requests < e.participant_limit
-          )
-    ORDER BY
-      CASE WHEN :sort = 'EVENT_DATE' THEN e.event_date END NULLS LAST,
-      CASE WHEN :sort = 'VIEWS'      THEN e.views      END NULLS LAST,
-      e.id
-    LIMIT :size OFFSET :offset
-    """, nativeQuery = true)
+            SELECT e.*
+            FROM events e
+            WHERE
+              (:textPattern IS NULL OR e.description ILIKE :textPattern
+                 OR e.annotation ILIKE :textPattern
+                 OR e.title      ILIKE :textPattern)
+              AND e.state = 'PUBLISHED'
+              AND e.published_on IS NOT NULL
+              AND e.category_id IN (:categories)
+              AND e.paid      = COALESCE(:paid, e.paid)
+              AND e.event_date >= :start
+              AND e.event_date <= COALESCE(:end, e.event_date)
+              AND (
+                    NOT :onlyAvailable
+                    OR e.participant_limit = 0
+                    OR e.confirmed_requests < e.participant_limit
+                  )
+            ORDER BY
+              CASE WHEN :sort = 'EVENT_DATE' THEN e.event_date END NULLS LAST,
+              CASE WHEN :sort = 'VIEWS'      THEN e.views      END NULLS LAST,
+              e.id
+            LIMIT :size OFFSET :offset
+            """, nativeQuery = true)
     List<Event> getEventsPublicByCategories(
             @Param("textPattern") String textPattern,
-            @Param("categories") List<Long> categories,   // список НЕ должен быть пустым
+            @Param("categories") List<Long> categories,
             @Param("paid") Boolean paid,
-            @Param("start") LocalDateTime start,          // уже нормализованный в сервисе
-            @Param("end") LocalDateTime end,              // может быть null
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
             @Param("onlyAvailable") boolean onlyAvailable,
-            @Param("sort") String sort,                   // 'EVENT_DATE' | 'VIEWS' | null
+            @Param("sort") String sort,
             @Param("offset") int offset,
             @Param("size") int size
     );
-
 
 
     @Query(value = """
@@ -97,7 +95,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
               CASE WHEN :sort = 'VIEWS'      THEN e.views      END NULLS LAST,
               e.id
             LIMIT :size OFFSET :offset
-            
+                        
             """, nativeQuery = true)
     List<Event> getEventsPublicWithoutCategories(
             @Param("textPattern") String textPattern,
@@ -109,8 +107,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("offset") int offset,
             @Param("size") int size
     );
-
-
 
 
     @Query(value = """
@@ -129,7 +125,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("usersEmpty") boolean usersEmpty,
             @Param("users") List<Long> users,
             @Param("statesEmpty") boolean statesEmpty,
-            @Param("states") List<String> states,       // или Enum -> тогда передавай строки в UPPER
+            @Param("states") List<String> states,
             @Param("catsEmpty") boolean catsEmpty,
             @Param("categories") List<Long> categories,
             @Param("start") LocalDateTime start,
@@ -137,7 +133,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("offset") int offset,
             @Param("size") int size
     );
-
 
 
     @Query(value = """

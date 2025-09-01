@@ -137,8 +137,6 @@ public class EventStorage {
                 case SEND_TO_REVIEW -> event.setState(State.PENDING);
             }
 
-
-            //event.setState(dto.getStateAction());
         }
         if (dto.getTitle() != null) {
             event.setTitle(dto.getTitle());

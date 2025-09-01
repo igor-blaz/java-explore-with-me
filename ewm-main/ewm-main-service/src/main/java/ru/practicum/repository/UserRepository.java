@@ -22,6 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("idsEmpty") boolean idsEmpty
     );
 
-   boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 
 }
