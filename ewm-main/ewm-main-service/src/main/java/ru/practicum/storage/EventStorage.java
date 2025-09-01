@@ -95,8 +95,8 @@ public class EventStorage {
     }
 
     public Event getEventPublishedByUserId(Long eventId, Long userId) {
-        return eventRepository.findPublishedByIdAndInitiatorId(eventId, userId).
-                orElseThrow(() -> new NotFoundException("объект не найден"));
+        return eventRepository.findPublishedByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotFoundException("объект не найден"));
     }
 
 

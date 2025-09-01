@@ -33,12 +33,12 @@ public class StatsClient {
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end,
                                        List<String> uris, boolean unique) {
-        DateTimeFormatter F = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         UriComponentsBuilder b = UriComponentsBuilder
                 .fromHttpUrl(baseUrl + "/stats")
-                .queryParam("start", start.format(F))
-                .queryParam("end", end.format(F))
+                .queryParam("start", start.format(formatter))
+                .queryParam("end", end.format(formatter))
                 .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {

@@ -95,7 +95,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
               CASE WHEN :sort = 'VIEWS'      THEN e.views      END NULLS LAST,
               e.id
             LIMIT :size OFFSET :offset
-                        
             """, nativeQuery = true)
     List<Event> getEventsPublicWithoutCategories(
             @Param("textPattern") String textPattern,
