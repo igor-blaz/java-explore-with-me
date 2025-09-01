@@ -12,7 +12,7 @@ services:
     ports:
       - "5430:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ewm -d ewm"]
+      test: [ "CMD-SHELL", "pg_isready -U ewm -d ewm" ]
       interval: 3s
       timeout: 5s
       retries: 20
@@ -28,7 +28,7 @@ services:
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U stats -d stats"]
+      test: [ "CMD-SHELL", "pg_isready -U stats -d stats" ]
       interval: 3s
       timeout: 5s
       retries: 20
@@ -51,7 +51,7 @@ services:
       stats-db:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "wget -qO- 'http://localhost:9090/stats?start=2000-01-01%2000:00:00&end=3000-01-01%2000:00:00' >/dev/null 2>&1" ]
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:9090/actuator/health | grep -q '\"status\":\"UP\"'" ]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -71,10 +71,17 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/ewm
       SPRING_DATASOURCE_USERNAME: ewm
       SPRING_DATASOURCE_PASSWORD: ewm
+      # 👇 добавляем оба варианта, чтобы StatsClient точно увидел
       STATS_BASE_URL: http://stats-server:9090
-      # если код читает другое свойство, можно добавить и STATS_URL
+      STATS_URL: http://stats-server:9090
     depends_on:
       ewm-db:
         condition: service_healthy
       stats-server:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL","wget -qO- http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"'" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
