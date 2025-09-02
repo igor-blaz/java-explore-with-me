@@ -71,7 +71,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/ewm
       SPRING_DATASOURCE_USERNAME: ewm
       SPRING_DATASOURCE_PASSWORD: ewm
-      # 👇 добавляем оба варианта, чтобы StatsClient точно увидел
       STATS_BASE_URL: http://stats-server:9090
       STATS_URL: http://stats-server:9090
     depends_on:
