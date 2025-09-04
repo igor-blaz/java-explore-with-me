@@ -45,7 +45,7 @@ public class AdminCompilationService {
     public CompilationDto updateCompilation(UpdateCompilationRequest dto, Long compId) {
         Compilation comp = compilationStorage.getCompilationById(compId);
 
-        if (dto.getPinned() != null && !Objects.equals(comp.getPinned(), dto.getPinned())) {
+        if (dto.getPinned() != null && !Objects.equals(comp.isPinned(), dto.getPinned())) {
             comp.setPinned(dto.getPinned());
         }
 

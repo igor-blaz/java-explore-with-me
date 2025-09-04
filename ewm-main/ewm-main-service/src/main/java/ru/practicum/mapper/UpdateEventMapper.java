@@ -1,7 +1,6 @@
 package ru.practicum.mapper;
 
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.UtilityClass;
 import org.springframework.stereotype.Component;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.exceptions.BadRequestException;

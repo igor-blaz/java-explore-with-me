@@ -7,7 +7,6 @@ import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.model.Category;
 import ru.practicum.storage.CategoryStorage;
-import ru.practicum.storage.EventStorage;
 
 import java.util.List;
 
@@ -16,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicCategoryService {
     private final CategoryStorage categoryStorage;
-    private final EventStorage eventStorage;
 
     public CategoryDto getCategoryById(Long id) {
         return CategoryMapper.toCategoryDto(categoryStorage.getCategoryById(id));

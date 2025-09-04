@@ -162,7 +162,7 @@ public class PrivateEventService {
         int limit = event.getParticipantLimit();
         int alreadyConfirmedCount = participationStorage.countByEventAndStatus(eventId, CONFIRMED);
         int freeSpaces = limit - alreadyConfirmedCount;
-        if (!event.getRequestModeration() || limit == 0) {
+        if (!event.isRequestModeration() || limit == 0) {
             throw new ConflictException("Подтверждение заявок не требуется." +
                     " Нет лимита или нет модерации");
         }
@@ -232,7 +232,7 @@ public class PrivateEventService {
     }
 
     public void isRequestModerationValidation(Event event) {
-        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
+        if (!event.isRequestModeration() || event.getParticipantLimit() == 0) {
             throw new ConflictException("Подтверждение заявок не требуется");
         }
     }

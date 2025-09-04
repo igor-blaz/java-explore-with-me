@@ -69,7 +69,7 @@ public class PrivateParticipationService {
             throw new ConflictException("Достигнут лимит участников для события");
         }
 
-        boolean autoConfirm = !event.getRequestModeration() || limit == 0;
+        boolean autoConfirm = !event.isRequestModeration() || limit == 0;
 
         Participation participation = Participation.builder()
                 .created(LocalDateTime.now())
