@@ -63,7 +63,7 @@ public class StatsConnector {
         List<Event> eventsWithViews = makeViews(events, stats);
 
         long nonZero = eventsWithViews.stream()
-                .filter(e -> e.getViews() != null && e.getViews() > 0).count();
+                .filter(e -> e.getViews() > 0).count();
         log.info("Views computed: total={}, >0={}", eventsWithViews.size(), nonZero);
 
         return EventMapper.eventFullDtoList(eventsWithViews);
