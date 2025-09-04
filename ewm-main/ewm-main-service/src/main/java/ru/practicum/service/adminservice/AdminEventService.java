@@ -12,6 +12,7 @@ import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.mapper.EventMapper;
 import ru.practicum.mapper.LocationMapper;
+import ru.practicum.mapper.UpdateEventMapper;
 import ru.practicum.model.Event;
 import ru.practicum.service.StatsConnector;
 import ru.practicum.storage.CategoryStorage;
@@ -27,9 +28,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminEventService {
     private final EventStorage eventStorage;
-    private final CategoryStorage categoryStorage;
     private final StatsConnector statsConnector;
     private final ParticipationStorage participationStorage;
+    private final UpdateEventMapper updateEventMapper;
 
 
     @Transactional
@@ -39,47 +40,33 @@ public class AdminEventService {
         log.debug("EVENT {} ", event);
         log.debug("UpdateRequest {}", dto);
 
-        if (dto.getAnnotation() != null) event.setAnnotation(dto.getAnnotation());
-        if (dto.getCategory() != null) event.setCategory(categoryStorage.getCategoryById(dto.getCategory()));
-        if (dto.getDescription() != null) event.setDescription(dto.getDescription());
-        if (dto.getEventDate() != null) event.setEventDate(dto.getEventDate());
-        if (dto.getLocation() != null) event.setLocation(LocationMapper.toEntity(dto.getLocation()));
-        if (dto.getPaid() != null) event.setPaid(dto.getPaid());
-        if (dto.getParticipantLimit() != null) event.setParticipantLimit(dto.getParticipantLimit());
-        if (dto.getRequestModeration() != null) event.setRequestModeration(dto.getRequestModeration());
-        if (dto.getTitle() != null) event.setTitle(dto.getTitle());
-        if (dto.getEventDate() != null) {
-            if (dto.getEventDate().isBefore(LocalDateTime.now())) {
-                throw new BadRequestException("Дата начала события не может быть в прошлом");
-            }
-            event.setEventDate(dto.getEventDate());
-        }
+        Event updatedEvent = updateEventMapper.updateEvent(event, dto);
         if (dto.getStateAction() != null) {
             switch (dto.getStateAction()) {
                 case PUBLISH_EVENT -> {
-                    if (event.getState() != State.PENDING) {
+                    if (updatedEvent.getState() != State.PENDING) {
                         throw new ConflictException("Опубликовать можно только событие в состоянии ожидания публикации");
                     }
-                    LocalDateTime effectiveDate = event.getEventDate();
+                    LocalDateTime effectiveDate = updatedEvent.getEventDate();
                     log.debug("Дата {}", effectiveDate);
                     if (effectiveDate == null || !effectiveDate.isAfter(LocalDateTime.now().plusHours(1))) {
                         throw new ConflictException("Дата начала события должна быть минимум через час от момента публикации");
                     }
-                    event.setState(State.PUBLISHED);
-                    event.setPublishedOn(LocalDateTime.now());
+                    updatedEvent.setState(State.PUBLISHED);
+                    updatedEvent.setPublishedOn(LocalDateTime.now());
                     log.info("Событие опубликовано");
                 }
                 case REJECT_EVENT -> {
-                    if (event.getState() == State.PUBLISHED) {
+                    if (updatedEvent.getState() == State.PUBLISHED) {
                         throw new ConflictException("Нельзя отклонить уже опубликованное событие");
                     }
-                    event.setState(State.CANCELED);
+                    updatedEvent.setState(State.CANCELED);
                 }
 
             }
         }
-        eventStorage.save(event);
-        return EventMapper.toEventDto(event);
+        eventStorage.save(updatedEvent);
+        return EventMapper.toEventDto(updatedEvent);
     }
 
 

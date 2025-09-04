@@ -1,16 +1,14 @@
 package ru.practicum.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Entity
@@ -21,10 +19,9 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pinned")
-    private Boolean pinned = false;
+    private boolean pinned;
 
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     private String title;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
