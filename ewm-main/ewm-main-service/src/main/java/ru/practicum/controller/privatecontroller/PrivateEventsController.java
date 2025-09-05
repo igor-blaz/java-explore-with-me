@@ -1,13 +1,18 @@
 package ru.practicum.controller.privatecontroller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.event.*;
+import ru.practicum.dto.event.EventFullDto;
+import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.dto.event.NewEventDto;
+import ru.practicum.dto.event.UpdateEventUserRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.participation.EventRequestStatusUpdateResult;
 import ru.practicum.dto.participation.ParticipationRequestDto;
-import ru.practicum.service.EventServiceImpl;
+import ru.practicum.service.privateservice.PrivateEventService;
 
 import java.util.List;
 
@@ -17,22 +22,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PrivateEventsController {
 
-    private final EventServiceImpl eventServiceImpl;
+    private final PrivateEventService eventServiceImpl;
 
     @GetMapping
     public List<EventShortDto> getUserEvents(
             @PathVariable Long userId,
-            @RequestParam(required = false) Integer from,
-            @RequestParam(required = false) Integer size
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "10") Integer size
     ) {
         return eventServiceImpl.getUserEvents(userId, from, size);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto addNewEvent(
             @PathVariable Long userId,
-            @RequestBody NewEventDto newEventDto
+            @Valid @RequestBody NewEventDto newEventDto
     ) {
+        log.info("Event {}", newEventDto);
         return eventServiceImpl.addNewEventDto(userId, newEventDto);
     }
 
@@ -46,7 +53,7 @@ public class PrivateEventsController {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
-            @RequestBody UpdateEventUserRequest updateEventUserRequest,
+            @Valid @RequestBody UpdateEventUserRequest updateEventUserRequest,
             @PathVariable Long userId,
             @PathVariable Long eventId
     ) {
@@ -64,7 +71,7 @@ public class PrivateEventsController {
 
     @PatchMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult updateEventCompilationRequest(
-            @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest,
+            @Valid @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest,
             @PathVariable Long userId,
             @PathVariable Long eventId
     ) {

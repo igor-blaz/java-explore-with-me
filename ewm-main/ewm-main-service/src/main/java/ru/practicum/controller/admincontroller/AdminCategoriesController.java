@@ -3,10 +3,11 @@ package ru.practicum.controller.admincontroller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.NewCategoryDto;
-import ru.practicum.service.CategoryServiceImpl;
+import ru.practicum.service.adminservice.AdminCategoryService;
 
 @Slf4j
 @RestController
@@ -14,14 +15,16 @@ import ru.practicum.service.CategoryServiceImpl;
 @RequiredArgsConstructor
 public class AdminCategoriesController {
 
-    private final CategoryServiceImpl categoryService;
+    private final AdminCategoryService categoryService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
         return categoryService.addCategory(newCategoryDto);
     }
 
     @DeleteMapping("/{catId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long catId) {
         categoryService.deleteCategory(catId);
     }
@@ -30,7 +33,7 @@ public class AdminCategoriesController {
     public CategoryDto updateCategory(
             @Valid @RequestBody CategoryDto categoryDto,
             @PathVariable Long catId) {
-        return  categoryService.updateCategory(categoryDto, catId);
+        return categoryService.updateCategory(categoryDto, catId);
     }
 
 

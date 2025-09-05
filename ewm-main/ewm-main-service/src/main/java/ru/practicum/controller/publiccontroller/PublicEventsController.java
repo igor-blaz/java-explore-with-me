@@ -1,11 +1,14 @@
 package ru.practicum.controller.publiccontroller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.service.EventServiceImpl;
+import ru.practicum.service.StatsConnector;
+import ru.practicum.service.publicservice.PublicEventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicEventsController {
 
-    private final EventServiceImpl eventServiceImpl;
+    private final StatsConnector statsConnector;
+    private final PublicEventService eventServiceImpl;
 
     @GetMapping
     public List<EventShortDto> searchEvents(
@@ -32,16 +36,18 @@ public class PublicEventsController {
             @RequestParam(defaultValue = "false") boolean onlyAvailable,
             @RequestParam(required = false) SortType sort,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request
     ) {
-        return null;
+        return eventServiceImpl.getEventsPublic(text, categories, paid, rangeStart,
+                rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
 
     @GetMapping("/{id}")
-    public List<EventShortDto> getCompilationsById(@PathVariable Long id) {
-
-        return null;
+    public EventFullDto getEventById(@PathVariable Long id, HttpServletRequest request) {
+        statsConnector.makeHit(request);
+        return eventServiceImpl.getEventByIdPublic(id);
     }
 
 }

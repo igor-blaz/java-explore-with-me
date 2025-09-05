@@ -1,4 +1,4 @@
-package ru.practicum.service;
+package ru.practicum.service.adminservice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,25 +11,15 @@ import ru.practicum.model.Category;
 import ru.practicum.storage.CategoryStorage;
 import ru.practicum.storage.EventStorage;
 
-import java.util.List;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CategoryServiceImpl {
+public class AdminCategoryService {
     private final CategoryStorage categoryStorage;
     private final EventStorage eventStorage;
 
-    public CategoryDto getCategoryById(Long id) {
-        return CategoryMapper.toCategoryDto(categoryStorage.getCategoryById(id));
-    }
-
-    public List<CategoryDto> getAllCategories(int from, int size) {
-        List<Category> categories = categoryStorage.getAllCategories(from, size);
-        return CategoryMapper.toCategoryDtoList(categories);
-    }
-
     public CategoryDto addCategory(NewCategoryDto categoryDto) {
+        existByNameCheck(categoryDto.getName());
         Category category = categoryStorage.addNewCategory(categoryDto);
         return CategoryMapper.toCategoryDto(category);
     }
@@ -43,11 +33,23 @@ public class CategoryServiceImpl {
         categoryStorage.deleteCategory(category);
     }
 
-    public CategoryDto updateCategory(CategoryDto categoryDto, Long id) {
+    private void existByNameCheck(String name) {
+        if (categoryStorage.isExistsByName(name)) {
+            throw new ConflictException("Имя категории уже занято");
+        }
+    }
+
+    private void existByNameNotInIdCheck(String name, Long catId) {
+        if (categoryStorage.isExistsByNameNotInId(name, catId)) {
+            throw new ConflictException("Имя категории уже занято");
+        }
+    }
+
+    public CategoryDto updateCategory(CategoryDto categoryDto, Long catId) {
+        existByNameNotInIdCheck(categoryDto.getName(), catId);
         Category categoryForUpdate = CategoryMapper.toEntity(categoryDto);
-        Category oldCategory = categoryStorage.getCategoryById(id);
+        Category oldCategory = categoryStorage.getCategoryById(catId);
         Category afterUpdate = categoryStorage.updateCategory(categoryForUpdate, oldCategory);
         return CategoryMapper.toCategoryDto(afterUpdate);
     }
-
 }

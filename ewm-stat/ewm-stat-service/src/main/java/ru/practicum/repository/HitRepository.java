@@ -45,7 +45,7 @@ public interface HitRepository extends JpaRepository<EndpointHit, Long> {
                 WHERE e.timestamp BETWEEN :start AND :end
                   AND e.uri IN :uris
                 GROUP BY e.app, e.uri
-                ORDER BY COUNT(DISTINCT e.ip) DESC
+                ORDER BY COUNT(DISTINCT e.uri)
             """)
     List<ViewStatsDto> findStatsUniqueByUris(LocalDateTime start, LocalDateTime end, List<String> uris);
 

@@ -24,6 +24,47 @@ import java.util.List;
 public class EventStorage {
     private final EventRepository eventRepository;
 
+    public Event getPublicEventById(Long id) {
+        return eventRepository.findPublishedById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено"));
+    }
+
+    public Event save(Event event) {
+        return eventRepository.save(event);
+    }
+
+    public List<Event> getEventsPublicByCategories(
+            String text,
+            List<Long> categories,
+            Boolean paid,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            boolean onlyAvailable,
+            String sort,
+            int from,
+            int size
+    ) {
+        return eventRepository.getEventsPublicByCategories(text, categories, paid, rangeStart, rangeEnd,
+                onlyAvailable, sort, from, size);
+    }
+
+    public List<Event> getEventsPublicWithoutCategories(
+            String text,
+            Boolean paid,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            boolean onlyAvailable,
+            String sort,
+            int from,
+            int size
+    ) {
+        return eventRepository.getEventsPublicWithoutCategories(text, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+    }
+
+    public List<Event> getEventsByIds(List<Long> ids) {
+        return eventRepository.findAllById(ids);
+    }
+
     public List<Event> getAdminEvents(boolean usersEmpty,
                                       boolean statesEmpty,
                                       boolean categoriesEmpty,
@@ -35,7 +76,8 @@ public class EventStorage {
                                       LocalDateTime rangeEnd,
                                       int from,
                                       int size) {
-        return eventRepository.findAdminEventsNative(usersEmpty, statesEmpty, categoriesEmpty, users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventRepository.findAdminEventsNative(usersEmpty, users, statesEmpty, states, categoriesEmpty,
+                categories, rangeStart, rangeEnd, from, size);
 
     }
 
@@ -52,8 +94,15 @@ public class EventStorage {
         return eventRepository.save(EventMapper.toEntity(newEventDto, user, category, location));
     }
 
-    public Event getUserEventsByEventId(Long eventId, Long userId) {
-        return eventRepository.findEventByIdAndInitiatorId(eventId, userId);
+    public Event getEventPublishedByUserId(Long eventId, Long userId) {
+        return eventRepository.findPublishedByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotFoundException("объект не найден"));
+    }
+
+
+    public Event getEventByUserId(Long eventId, Long userId) {
+        return eventRepository.findByIdAndInitiator_Id(eventId, userId)
+                .orElseThrow(() -> new NotFoundException(""));
     }
 
     @Transactional
@@ -88,8 +137,6 @@ public class EventStorage {
                 case SEND_TO_REVIEW -> event.setState(State.PENDING);
             }
 
-
-            //event.setState(dto.getStateAction());
         }
         if (dto.getTitle() != null) {
             event.setTitle(dto.getTitle());

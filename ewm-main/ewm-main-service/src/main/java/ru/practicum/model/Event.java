@@ -6,9 +6,10 @@ import ru.practicum.dto.event.State;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
 @Table(name = "events")
@@ -16,24 +17,23 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "annotation", nullable = false, columnDefinition = "TEXT")
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String annotation;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(name = "confirmed_requests", nullable = false)
-    @Builder.Default
-    private Long confirmedRequests = 0L;
+    private long confirmedRequests;
 
-    @Column(name = "created_on", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdOn;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "event_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime eventDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,30 +44,21 @@ public class Event {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @Column(name = "paid", nullable = false)
-    @Builder.Default
-    private Boolean paid = false;
+    private boolean paid;
 
-    @Column(name = "participant_limit", nullable = false)
-    @Builder.Default
-    private Integer participantLimit = 0;
+    private int participantLimit;
 
-    @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
-    @Column(name = "request_moderation", nullable = false)
-    @Builder.Default
-    private Boolean requestModeration = true;
+    private boolean requestModeration;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false)
+    @Column(nullable = false)
     private State state;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "views", nullable = false)
-    @Builder.Default
-    private Long views = 0L;
+    private long views;
 }
 

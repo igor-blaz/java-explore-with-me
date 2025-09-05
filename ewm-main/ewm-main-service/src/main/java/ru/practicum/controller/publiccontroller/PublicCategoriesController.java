@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.category.CategoryDto;
-import ru.practicum.service.CategoryServiceImpl;
+import ru.practicum.service.publicservice.PublicCategoryService;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublicCategoriesController {
 
-    private final CategoryServiceImpl categoryService;
+    private final PublicCategoryService categoryService;
 
     @GetMapping
     public List<CategoryDto> getCategories(
