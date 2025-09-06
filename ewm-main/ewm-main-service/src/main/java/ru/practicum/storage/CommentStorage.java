@@ -3,7 +3,6 @@ package ru.practicum.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.practicum.dto.comment.CommentDto;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.model.Comment;
 import ru.practicum.repository.CommentRepository;
@@ -17,9 +16,14 @@ import java.util.Set;
 public class CommentStorage {
     private final CommentRepository repository;
 
-    public Comment getCommentById(Long userId, Long commentId) {
+    public Comment getCommentByUserIdAndCommentId(Long userId, Long commentId) {
         return repository.findByIdAndUser_Id(commentId, userId)
                 .orElseThrow(() -> new NotFoundException("Комментарий " + commentId + "не найден"));
+    }
+    public Comment getCommentById(Long commentId){
+        return repository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Комментарий " + commentId + "не найден"));
+
     }
 
     public Comment postComment(Comment comment) {
@@ -27,7 +31,7 @@ public class CommentStorage {
     }
 
     public void deleteCommentById(Long userId, Long commentId) {
-        getCommentById(userId, commentId);
+        getCommentByUserIdAndCommentId(userId, commentId);
         repository.deleteById(commentId);
     }
 
@@ -42,11 +46,11 @@ public class CommentStorage {
     public Set<Comment> getCommentsByTime(Long userId,
                                           LocalDateTime start,
                                           LocalDateTime end) {
-        return repository.
+        return repository.findCommentsByUserIdAndTime(userId, start, end);
     }
 
-    public Set<CommentDto> getCommentsByText(Long userId, String text) {
-        return repository.
+    public Set<Comment> getCommentsByText(Long userId, String text) {
+        return repository.findCommentByText(userId, text);
     }
 
 }

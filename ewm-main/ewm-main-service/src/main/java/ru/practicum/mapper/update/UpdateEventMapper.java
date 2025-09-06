@@ -1,9 +1,10 @@
-package ru.practicum.mapper;
+package ru.practicum.mapper.update;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.exceptions.BadRequestException;
+import ru.practicum.mapper.LocationMapper;
 import ru.practicum.model.Event;
 import ru.practicum.storage.CategoryStorage;
 

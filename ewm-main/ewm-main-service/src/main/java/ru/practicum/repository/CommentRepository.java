@@ -20,18 +20,26 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Set<Comment> findAllByUser_Id(Long userId);
 
     @Query(value = """
-        SELECT c.*
-        FROM comments c
-        WHERE c.author_id = :userId
-          AND c.published_on BETWEEN :start AND :end
-        ORDER BY c.id
-        """, nativeQuery = true)
+            SELECT c.*
+            FROM comments c
+            WHERE c.author_id = :userId
+              AND c.published_on BETWEEN :start AND :end
+            ORDER BY c.id
+            """, nativeQuery = true)
     Set<Comment> findCommentsByUserIdAndTime(
             @Param("userId") Long userId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
-
+    @Query(value = """
+            SELECT c.*
+            FROM comments c
+            WHERE c.text ILIKE :text
+            AND c.author_id = :userId
+            ORDER BY c.id
+            """, nativeQuery = true)
+    Set<Comment> findCommentByText(@Param("userId") Long userId,
+                                   @Param("text") String text);
 
 
 }

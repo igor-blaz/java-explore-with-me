@@ -25,54 +25,55 @@ public class PrivateCommentsController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto postComment(@PathVariable Long userId,
                                   @Valid @RequestBody NewCommentDto newCommentDto) {
-        return null;
+        return commentService.postComment(userId, newCommentDto);
     }
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable Long userId,
                               @PathVariable Long commentId) {
-
+        commentService.deleteCommentById(userId, commentId);
     }
 
-    @PatchMapping
+    @PatchMapping("/{commentId}")
     public CommentDto updateComment(@PathVariable Long userId,
+                                    @PathVariable Long commentId,
                                     @Valid @RequestBody CommentUpdateRequestDto update) {
-        return null;
+        return commentService.updateComment(userId, commentId, update);
 
     }
 
     @GetMapping("/{commentId}")
-    public Set<CommentDto> getCommentByCommentId(@PathVariable Long userId,
-                                                 @PathVariable Long commentId) {
-        return null;
+    public CommentDto getCommentByCommentId(@PathVariable Long userId,
+                                            @PathVariable Long commentId) {
+        return commentService.getCommentById(userId, commentId);
     }
 
     @GetMapping
     public Set<CommentDto> getCommentsByUserId(@PathVariable Long userId) {
-        return null;
+        return commentService.getCommentsByUserId(userId);
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/by-event/{eventId}")
     public Set<CommentDto> getCommentsByEventId(@PathVariable Long userId,
                                                 @PathVariable Long eventId) {
-        return null;
+        return commentService.getCommentsByEventId(userId, eventId);
     }
 
-    @GetMapping
-    public Set<CommentDto> getCommentsByDate(
+    @GetMapping("/by-time")
+    public Set<CommentDto> getCommentsByTime(
             @PathVariable Long userId,
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime rangeStart,
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime rangeEnd) {
 
-        return null;
+        return commentService.getCommentsByTime(userId, rangeStart, rangeEnd);
     }
 
-    @GetMapping
+    @GetMapping("/by-text")
     public Set<CommentDto> getCommentsByText(@PathVariable Long userId,
                                              @RequestParam String text) {
-        return null;
+        return commentService.getCommentsByText(userId, text);
     }
 }
