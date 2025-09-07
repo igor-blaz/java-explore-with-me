@@ -20,7 +20,8 @@ public class CommentStorage {
         return repository.findByIdAndUser_Id(commentId, userId)
                 .orElseThrow(() -> new NotFoundException("Комментарий " + commentId + "не найден"));
     }
-    public Comment getCommentById(Long commentId){
+
+    public Comment getCommentById(Long commentId) {
         return repository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Комментарий " + commentId + "не найден"));
 
@@ -30,12 +31,12 @@ public class CommentStorage {
         return repository.save(comment);
     }
 
-    public void deleteCommentById(Long userId, Long commentId) {
+    public void deleteCommentByUserIdAndCommId(Long userId, Long commentId) {
         getCommentByUserIdAndCommentId(userId, commentId);
         repository.deleteById(commentId);
     }
 
-    public Set<Comment> getCommentsByEventId(Long userId, Long eventId) {
+    public Set<Comment> getCommentsByUserIdAndEventId(Long userId, Long eventId) {
         return repository.findAllByUser_IdAndEvent_Id(userId, eventId);
     }
 
@@ -43,13 +44,21 @@ public class CommentStorage {
         return repository.findAllByUser_Id(userId);
     }
 
-    public Set<Comment> getCommentsByTime(Long userId,
-                                          LocalDateTime start,
-                                          LocalDateTime end) {
+    public Set<Comment> getAllowedCommentsByUserId(Long userId) {
+        return repository.findAllByIsBannedAndUser_Id(false, userId);
+    }
+
+    public Set<Comment> getAllowedCommentsByEventId(Long eventId) {
+        return repository.findAllByIsBannedAndEvent_Id(false, eventId);
+    }
+
+    public Set<Comment> getCommentsByUserIdAndTime(Long userId,
+                                                   LocalDateTime start,
+                                                   LocalDateTime end) {
         return repository.findCommentsByUserIdAndTime(userId, start, end);
     }
 
-    public Set<Comment> getCommentsByText(Long userId, String text) {
+    public Set<Comment> getCommentsByUserIdAndText(Long userId, String text) {
         return repository.findCommentByText(userId, text);
     }
 

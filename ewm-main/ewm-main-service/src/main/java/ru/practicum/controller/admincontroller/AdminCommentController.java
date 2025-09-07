@@ -18,6 +18,7 @@ public class AdminCommentController {
     @PatchMapping("/{commentId}")
     public CommentDto banComment(@PathVariable Long commentId,
                                  @Valid @RequestBody CommentAdminBanRequest request) {
-        return commentService.setBan(commentId, request);
+        return commentService.setBanByCommentId(commentId, request);
     }
+
 }

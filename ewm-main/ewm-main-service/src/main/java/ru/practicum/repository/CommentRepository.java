@@ -17,7 +17,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Set<Comment> findAllByUser_IdAndEvent_Id(Long userId,
                                              Long eventId);
 
+    Set<Comment> findAllByEvent_Id(Long userId);
+
     Set<Comment> findAllByUser_Id(Long userId);
+
+    Set<Comment> findAllByIsBannedAndUser_Id(boolean isBanned, Long userId);
+
+    Set<Comment> findAllByIsBannedAndEvent_Id(boolean isBanned, Long eventId);
 
     @Query(value = """
             SELECT c.*

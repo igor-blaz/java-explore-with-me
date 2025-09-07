@@ -60,11 +60,11 @@ public class PrivateCommentService {
     }
 
     public void deleteCommentById(Long userId, Long commentId) {
-        storage.deleteCommentById(userId, commentId);
+        storage.deleteCommentByUserIdAndCommId(userId, commentId);
     }
 
     public Set<CommentDto> getCommentsByEventId(Long userId, Long eventId) {
-        Set<Comment> comments = storage.getCommentsByEventId(userId, eventId);
+        Set<Comment> comments = storage.getCommentsByUserIdAndEventId(userId, eventId);
         return CommentMapper.toSetDto(comments);
     }
 
@@ -76,13 +76,13 @@ public class PrivateCommentService {
     public Set<CommentDto> getCommentsByTime(Long userId,
                                              LocalDateTime start,
                                              LocalDateTime end) {
-        Set<Comment> comments = storage.getCommentsByTime(userId, start, end);
+        Set<Comment> comments = storage.getCommentsByUserIdAndTime(userId, start, end);
         return CommentMapper.toSetDto(comments);
     }
 
     public Set<CommentDto> getCommentsByText(Long userId, String text) {
         String updatedText = StringIlikeSqlPattern.makeIlikePattern(text);
-        Set<Comment> comments = storage.getCommentsByText(userId, updatedText);
+        Set<Comment> comments = storage.getCommentsByUserIdAndText(userId, updatedText);
         return CommentMapper.toSetDto(comments);
     }
 

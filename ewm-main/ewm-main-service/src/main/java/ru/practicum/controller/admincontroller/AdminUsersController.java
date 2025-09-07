@@ -5,10 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.comment.CommentAdminBanRequest;
+import ru.practicum.dto.comment.CommentDto;
 import ru.practicum.dto.user.UserDto;
+import ru.practicum.service.adminservice.AdminCommentService;
 import ru.practicum.service.adminservice.AdminUserService;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -17,12 +21,19 @@ import java.util.List;
 public class AdminUsersController {
 
     private final AdminUserService userService;
+    private final AdminCommentService commentService;
 
     @GetMapping
     public List<UserDto> getUserDto(@RequestParam(required = false) List<Long> ids,
                                     @RequestParam(defaultValue = "0") int from,
                                     @RequestParam(defaultValue = "10") int size) {
         return userService.getUsers(ids, from, size);
+    }
+
+    @PatchMapping("/comments/{userId}")
+    public Set<CommentDto> banComment(@PathVariable Long userId,
+                                      @Valid @RequestBody CommentAdminBanRequest request) {
+        return commentService.setBanToUserComments(userId, request);
     }
 
     @PostMapping
