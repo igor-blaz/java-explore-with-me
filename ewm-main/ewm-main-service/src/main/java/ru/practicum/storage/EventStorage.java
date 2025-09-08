@@ -102,7 +102,7 @@ public class EventStorage {
 
     public Event getEventByUserId(Long eventId, Long userId) {
         return eventRepository.findByIdAndInitiator_Id(eventId, userId)
-                .orElseThrow(() -> new NotFoundException(""));
+                .orElseThrow(() -> new NotFoundException("Событие " + eventId + " не найдено"));
     }
 
     @Transactional

@@ -15,6 +15,7 @@ import ru.practicum.mapper.update.UpdateCommentMapper;
 import ru.practicum.model.Comment;
 import ru.practicum.model.Event;
 import ru.practicum.model.User;
+import ru.practicum.service.StatsConnector;
 import ru.practicum.storage.CommentStorage;
 import ru.practicum.storage.EventStorage;
 import ru.practicum.storage.UserStorage;
@@ -30,6 +31,7 @@ public class PrivateCommentService {
     private final CommentStorage storage;
     private final UserStorage userStorage;
     private final EventStorage eventStorage;
+    private final StatsConnector statsConnector;
 
     public CommentDto postComment(Long userId, NewCommentDto newCommentDto) {
         if (!Objects.equals(userId, newCommentDto.getUserId())) {
@@ -37,7 +39,8 @@ public class PrivateCommentService {
         }
         User author = userStorage.getUserById(userId);
         Event event = eventStorage.getEventByUserId(newCommentDto.getEventId(), userId);
-
+        long views = statsConnector.getViewsCountForEvent(event.getId(), true);
+        event.setViews(views);
         Comment comment = CommentMapper.toModelFromNewDto(newCommentDto, author, event);
         Comment postedComment = storage.postComment(comment);
         return CommentMapper.toDto(postedComment);

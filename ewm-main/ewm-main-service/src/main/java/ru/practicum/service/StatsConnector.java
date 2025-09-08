@@ -93,12 +93,7 @@ public class StatsConnector {
     public EventFullDto getViewsForEvent(Event event, boolean getUniqueIps) {
         String uri = "/events/" + event.getId();
 
-        List<ViewStatsDto> stats = statsClient.getStats(
-                LocalDateTime.of(2000, 1, 1, 0, 0),
-                LocalDateTime.of(3000, 1, 1, 0, 0),
-                List.of(uri),
-                getUniqueIps
-        );
+        List<ViewStatsDto> stats = getStats(uri, getUniqueIps);
 
         long views = 0L;
         if (!stats.isEmpty()) {
@@ -109,6 +104,28 @@ public class StatsConnector {
         log.info("Получение просмотров {} для события {}", views, event.getId());
 
         return EventMapper.toEventDto(event);
+    }
+
+    private List<ViewStatsDto> getStats(String uri, boolean getUniqueIps) {
+        return statsClient.getStats(
+                LocalDateTime.of(2000, 1, 1, 0, 0),
+                LocalDateTime.of(3000, 1, 1, 0, 0),
+                List.of(uri),
+                getUniqueIps
+        );
+    }
+
+    public long getViewsCountForEvent(Long eventId, boolean getUniqueIps) {
+        String uri = "/events/" + eventId;
+
+        List<ViewStatsDto> stats = getStats(uri, getUniqueIps);
+
+        long views = 0L;
+        if (!stats.isEmpty()) {
+            views = stats.get(0).getHits();
+        }
+
+        return views;
     }
 
 }

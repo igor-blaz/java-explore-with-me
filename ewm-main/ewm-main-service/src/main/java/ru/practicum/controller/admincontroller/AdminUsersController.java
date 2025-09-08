@@ -39,6 +39,7 @@ public class AdminUsersController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUserDto(@Valid @RequestBody UserDto userDto) {
+        log.info("Юзер опубликован {}", userDto);
         return userService.addUser(userDto);
     }
 
