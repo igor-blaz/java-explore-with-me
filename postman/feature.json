@@ -229,7 +229,14 @@
       "name": "GetByTime",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/by-time?rangeStart=2025-01-01%2000:00:00&rangeEnd=2030-01-01%2000:00:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ]
+        }
       },
       "response": []
     },
@@ -237,7 +244,14 @@
       "name": "GetByText",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/by-text?text=ping",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ]
+        }
       },
       "response": []
     },
@@ -245,7 +259,15 @@
       "name": "GetCommentByEventId",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/by-event/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ]
+        }
+
       },
       "response": []
     },
@@ -302,7 +324,14 @@
       "name": "public get by event",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/comments/by-event/1000",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ]
+        }
       },
       "response": []
     },
@@ -310,7 +339,14 @@
       "name": "public get by user",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/comments/by-user/1000",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ]
+        }
       },
       "response": []
     }
