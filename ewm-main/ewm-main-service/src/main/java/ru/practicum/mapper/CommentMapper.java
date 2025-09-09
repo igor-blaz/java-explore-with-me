@@ -43,14 +43,4 @@ public class CommentMapper {
                 .build();
     }
 
-    public static Comment toModel(CommentDto commentDto, User user, Event event) {
-        return Comment.builder()
-                .id(commentDto.getId())
-                .event(event)
-                .text(commentDto.getText())
-                .isBanned(commentDto.isBanned())
-                .publishedOn(commentDto.getPublishedOn())
-                .user(user)
-                .build();
-    }
 }
