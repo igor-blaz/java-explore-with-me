@@ -32,6 +32,7 @@ public class StatsController {
         if (end.isBefore(start)) {
             throw new BadRequestException("end must be after or equal to start");
         }
+        log.info("UNIQUE {}", unique);
         return service.getViews(start, end, uris, unique);
     }
 

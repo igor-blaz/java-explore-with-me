@@ -10,7 +10,7 @@ import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.mapper.EventMapper;
-import ru.practicum.mapper.UpdateEventMapper;
+import ru.practicum.mapper.update.UpdateEventMapper;
 import ru.practicum.model.Event;
 import ru.practicum.service.StatsConnector;
 import ru.practicum.storage.EventStorage;

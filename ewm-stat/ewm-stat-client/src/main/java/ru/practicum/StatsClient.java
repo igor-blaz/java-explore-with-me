@@ -22,7 +22,7 @@ public class StatsClient {
     private final String baseUrl;
 
     public StatsClient(RestTemplate rest,
-                       @Value("${stats.url}") String baseUrl) {
+                       @Value("${stats.base-url}") String baseUrl) {
         this.rest = rest;
         this.baseUrl = baseUrl;
     }
